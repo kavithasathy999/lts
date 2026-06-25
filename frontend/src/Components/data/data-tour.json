@@ -1,0 +1,171 @@
+[
+    {
+        "id": 1,
+        "image": "tour_4_1.jpg",
+        "bannerImg": "tour_4_1.jpg",
+        "title": "Greece Tour Package",
+        "price": "$980.00"
+    },
+    {
+        "id": 2,
+        "image": "tour_4_2.jpg",
+        "bannerImg": "tour_4_2.jpg",
+        "title": "Dubai Tour Package",
+        "price": "$980.00"
+    },
+    {
+        "id": 3,
+        "image": "tour_4_3.jpg",
+        "bannerImg": "tour_4_3.jpg",
+        "title": "Belgium Tour Package",
+        "price": "$980.00"
+    },
+    {
+        "id": 4,
+        "image": "tour_4_4.jpg",
+        "bannerImg": "tour_4_4.jpg",
+        "title": "Greece Tour Package",
+        "price": "$980.00"
+    },
+    {
+        "id": 5,
+        "image": "tour_4_5.jpg",
+        "bannerImg": "tour_4_5.jpg",
+        "title": "Maldives Tour Package",
+        "price": "$980.00"
+    },
+    {
+        "id": 6,
+        "image": "tour_4_6.jpg",
+        "bannerImg": "tour_4_6.jpg",
+        "title": "Paris Tour Package",
+        "price": "$980.00"
+    },
+    {
+        "id": 7,
+        "image": "tour_4_7.jpg",
+        "bannerImg": "tour_4_7.jpg",
+        "title": "Switzerland Tour Package",
+        "price": "$980.00"
+    },
+    {
+        "id": 8,
+        "image": "tour_4_8.jpg",
+        "bannerImg": "tour_4_8.jpg",
+        "title": "Bali Tour Package",
+        "price": "$980.00"
+    },
+    {
+        "id": 9,
+        "image": "tour_4_8.jpg",
+        "bannerImg": "tour_4_8.jpg",
+        "title": "Bali Tour Package",
+        "price": "$980.00"
+    },
+    {
+        "id": 10,
+        "image": "tour_4_7.jpg",
+        "bannerImg": "tour_4_7.jpg",
+        "title": "Switzerland Tour Package",
+        "price": "$980.00"
+    },
+    {
+        "id": 11,
+        "image": "tour_4_6.jpg",
+        "bannerImg": "tour_4_6.jpg",
+        "title": "Paris Tour Package",
+        "price": "$980.00"
+    },
+    {
+        "id": 12,
+        "image": "tour_4_5.jpg",
+        "bannerImg": "tour_4_5.jpg",
+        "title": "Maldives Tour Package",
+        "price": "$980.00"
+    },
+    {
+        "id": 13,
+        "image": "tour_4_4.jpg",
+        "bannerImg": "tour_4_4.jpg",
+        "title": "Greece Tour Package",
+        "price": "$980.00"
+    },
+    {
+        "id": 14,
+        "image": "tour_4_3.jpg",
+        "bannerImg": "tour_4_3.jpg",
+        "title": "Belgium Tour Package",
+        "price": "$980.00"
+    },
+    {
+        "id": 15,
+        "image": "tour_4_2.jpg",
+        "bannerImg": "tour_4_2.jpg",
+        "title": "Dubai Tour Package",
+        "price": "$980.00"
+    },
+    {
+        "id": 16,
+        "image": "tour_4_1.jpg",
+        "bannerImg": "tour_4_1.jpg",
+        "title": "Greece Tour Package",
+        "price": "$980.00"
+    },
+    
+    {
+        "id": 17,
+        "image": "tour_4_1.jpg",
+        "bannerImg": "tour_4_1.jpg",
+        "title": "Greece Tour Package",
+        "price": "$980.00"
+    },
+    {
+        "id": 18,
+        "image": "tour_4_2.jpg",
+        "bannerImg": "tour_4_2.jpg",
+        "title": "Dubai Tour Package",
+        "price": "$980.00"
+    },
+    {
+        "id": 19,
+        "image": "tour_4_3.jpg",
+        "bannerImg": "tour_4_3.jpg",
+        "title": "Belgium Tour Package",
+        "price": "$980.00"
+    },
+    {
+        "id": 20,
+        "image": "tour_4_4.jpg",
+        "bannerImg": "tour_4_4.jpg",
+        "title": "Greece Tour Package",
+        "price": "$980.00"
+    },
+    {
+        "id": 21,
+        "image": "tour_4_5.jpg",
+        "bannerImg": "tour_4_5.jpg",
+        "title": "Maldives Tour Package",
+        "price": "$980.00"
+    },
+    {
+        "id": 22,
+        "image": "tour_4_6.jpg",
+        "bannerImg": "tour_4_6.jpg",
+        "title": "Paris Tour Package",
+        "price": "$980.00"
+    },
+    {
+        "id": 23,
+        "image": "tour_4_7.jpg",
+        "bannerImg": "tour_4_7.jpg",
+        "title": "Switzerland Tour Package",
+        "price": "$980.00"
+    },
+    {
+        "id": 24,
+        "image": "tour_4_8.jpg",
+        "bannerImg": "tour_4_8.jpg",
+        "title": "Bali Tour Package",
+        "price": "$980.00"
+    }
+]

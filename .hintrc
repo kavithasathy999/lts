@@ -1,0 +1,20 @@
+{
+  "extends": [
+    "development"
+  ],
+  "hints": {
+    "apple-touch-icons": "off",
+    "compat-api/css": [
+      "default",
+      {
+        "ignore": [
+          "-webkit-backdrop-filter",
+          "backdrop-filter",
+          "user-select",
+          "-o-object-fit"
+        ]
+      }
+    ],
+    "manifest-file-extension": "off"
+  }
+}

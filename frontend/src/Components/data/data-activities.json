@@ -1,0 +1,170 @@
+[
+    {
+        "id": 1,
+        "image": "tour_5_1.jpg",
+        "bannerImg": "tour_5_1.jpg",
+        "title": "Paragliding",
+        "price": "$980.00"
+    },
+    {
+        "id": 2,
+        "image": "tour_5_2.jpg",
+        "bannerImg": "tour_5_2.jpg",
+        "title": "Coastal Adventure",
+        "price": "$880.00"
+    },
+    {
+        "id": 3,
+        "image": "tour_5_3.jpg",
+        "bannerImg": "tour_5_3.jpg",
+        "title": "Departure",
+        "price": "$680.00"
+    },
+    {
+        "id": 4,
+        "image": "tour_5_4.jpg",
+        "bannerImg": "tour_5_4.jpg",
+        "title": "Cultural Immersion",
+        "price": "$580.00"
+    },
+    {
+        "id": 5,
+        "image": "tour_5_5.jpg",
+        "bannerImg": "tour_5_5.jpg",
+        "title": "Mountain Campaign",
+        "price": "$480.00"
+    },
+    {
+        "id": 6,
+        "image": "tour_5_6.jpg",
+        "bannerImg": "tour_5_6.jpg",
+        "title": "Lake Fishing",
+        "price": "$480.00"
+    },
+    {
+        "id": 7,
+        "image": "tour_5_7.jpg",
+        "bannerImg": "tour_5_7.jpg",
+        "title": "Cycling",
+        "price": "$480.00"
+    },
+    {
+        "id": 8,
+        "image": "tour_5_8.jpg",
+        "bannerImg": "tour_5_8.jpg",
+        "title": "Hammock on the beach",
+        "price": "$380.00"
+    },
+    {
+        "id": 9,
+        "image": "tour_5_8.jpg",
+        "bannerImg": "tour_5_8.jpg",
+        "title": "Paragliding",
+        "price": "$980.00"
+    },
+    {
+        "id": 10,
+        "image": "tour_5_7.jpg",
+        "bannerImg": "tour_5_7.jpg",
+        "title": "Coastal Adventure",
+        "price": "$880.00"
+    },
+    {
+        "id": 11,
+        "image": "tour_5_6.jpg",
+        "bannerImg": "tour_5_6.jpg",
+        "title": "Departure",
+        "price": "$680.00"
+    },
+    {
+        "id": 12,
+        "image": "tour_5_5.jpg",
+        "bannerImg": "tour_5_5.jpg",
+        "title": "Cultural Immersion",
+        "price": "$580.00"
+    },
+    {
+        "id": 13,
+        "image": "tour_5_4.jpg",
+        "bannerImg": "tour_5_4.jpg",
+        "title": "Mountain Campaign",
+        "price": "$480.00"
+    },
+    {
+        "id": 14,
+        "image": "tour_5_3.jpg",
+        "bannerImg": "tour_5_3.jpg",
+        "title": "Lake Fishing",
+        "price": "$480.00"
+    },
+    {
+        "id": 15,
+        "image": "tour_5_2.jpg",
+        "bannerImg": "tour_5_2.jpg",
+        "title": "Cycling",
+        "price": "$480.00"
+    },
+    {
+        "id": 16,
+        "image": "tour_5_1.jpg",
+        "bannerImg": "tour_5_1.jpg",
+        "title": "Hammock on the beach",
+        "price": "$380.00"
+    },
+    {
+        "id": 17,
+        "image": "tour_5_1.jpg",
+        "bannerImg": "tour_5_1.jpg",
+        "title": "Paragliding",
+        "price": "$980.00"
+    },
+    {
+        "id": 18,
+        "image": "tour_5_2.jpg",
+        "bannerImg": "tour_5_2.jpg",
+        "title": "Coastal Adventure",
+        "price": "$880.00"
+    },
+    {
+        "id": 19,
+        "image": "tour_5_3.jpg",
+        "bannerImg": "tour_5_3.jpg",
+        "title": "Departure",
+        "price": "$680.00"
+    },
+    {
+        "id": 20,
+        "image": "tour_5_4.jpg",
+        "bannerImg": "tour_5_4.jpg",
+        "title": "Cultural Immersion",
+        "price": "$580.00"
+    },
+    {
+        "id": 21,
+        "image": "tour_5_5.jpg",
+        "bannerImg": "tour_5_5.jpg",
+        "title": "Mountain Campaign",
+        "price": "$480.00"
+    },
+    {
+        "id": 22,
+        "image": "tour_5_6.jpg",
+        "bannerImg": "tour_5_6.jpg",
+        "title": "Lake Fishing",
+        "price": "$480.00"
+    },
+    {
+        "id": 23,
+        "image": "tour_5_7.jpg",
+        "bannerImg": "tour_5_7.jpg",
+        "title": "Cycling",
+        "price": "$480.00"
+    },
+    {
+        "id": 24,
+        "image": "tour_5_8.jpg",
+        "bannerImg": "tour_5_8.jpg",
+        "title": "Hammock on the beach",
+        "price": "$380.00"
+    }
+]
