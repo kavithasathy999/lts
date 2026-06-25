@@ -73,18 +73,48 @@ function RegistrationForm() {
     value: c.isoCode,
     label: c.name
   }));
+
+  // All states worldwide (independent)
+  const allStateOptions = State.getAllStates().map(s => ({
+    value: s.isoCode,
+    label: s.name,
+    countryCode: s.countryCode
+  }));
+
   const stateOptions = selectedCountry
-  ? State.getStatesOfCountry(selectedCountry.value).map(s => ({
-      value: s.isoCode,
-      label: s.name
-    }))
-  : [];
+    ? State.getStatesOfCountry(selectedCountry.value).map(s => ({
+        value: s.isoCode,
+        label: s.name,
+        countryCode: selectedCountry.value
+      }))
+    : allStateOptions;
+
+  // All cities worldwide (independent)
+  const allCityOptions = City.getAllCities().map(c => ({
+    value: c.name,
+    label: c.name,
+    stateCode: c.stateCode,
+    countryCode: c.countryCode
+  }));
+
   const cityOptions = selectedState
-  ? City.getCitiesOfState(selectedCountry.value, selectedState.value).map(c => ({
-      value: c.name,
-      label: c.name
-    }))
-  : [];
+    ? City.getCitiesOfState(
+        selectedCountry?.value || selectedState.countryCode,
+        selectedState.value
+      ).map(c => ({
+        value: c.name,
+        label: c.name,
+        stateCode: selectedState.value,
+        countryCode: selectedCountry?.value || selectedState.countryCode
+      }))
+    : selectedCountry
+    ? City.getCitiesOfCountry(selectedCountry.value).map(c => ({
+        value: c.name,
+        label: c.name,
+        stateCode: c.stateCode,
+        countryCode: selectedCountry.value
+      }))
+    : allCityOptions;
 
   const allFilled =
     formData.exhibitorCompanyName &&
@@ -711,52 +741,91 @@ function RegistrationForm() {
                           />
                         </div>
 
+                        {/* CITY - First */}
                         <div className="col-lg-12 col-md-12">
                           <label className="form-label small fw-bold text-uppercase text-dark">
-                            Country <span className="text-danger">*</span>
+                            City <span className="text-danger">*</span>
                           </label>
                           <Select
-                            options={countryOptions}
-                            placeholder="Country"
-                            value={selectedCountry}
-                            onChange={(opt) => {
-                              setSelectedCountry(opt); 
-                              setSelectedState(null);
-                              setSelectedCity("");
+                            options={cityOptions}
+                            placeholder="Type to search city..."
+                            value={selectedCity || null}
+                            isClearable
+                            filterOption={(option, inputValue) => {
+                              if (!inputValue || inputValue.length < 2) return false;
+                              return option.label.toLowerCase().includes(inputValue.toLowerCase());
                             }}
-                            isDisabled={loadingAction}
+                            noOptionsMessage={({ inputValue }) =>
+                              !inputValue || inputValue.length < 2
+                                ? 'Type at least 2 characters to search'
+                                : 'No cities found'
+                            }
+                            onChange={(opt) => {
+                              if (!opt) {
+                                setSelectedCity(null);
+                                setFormData({ ...formData, city: "" });
+                                return;
+                              }
+                              setSelectedCity(opt);
+                              // Auto-fill state and country from city
+                              const stateObj = opt.stateCode && opt.countryCode
+                                ? State.getStatesOfCountry(opt.countryCode).find(s => s.isoCode === opt.stateCode)
+                                : null;
+                              const countryObj = opt.countryCode
+                                ? Country.getCountryByCode(opt.countryCode)
+                                : null;
+                              const newState = stateObj
+                                ? { value: stateObj.isoCode, label: stateObj.name, countryCode: opt.countryCode }
+                                : selectedState;
+                              const newCountry = countryObj
+                                ? { value: countryObj.isoCode, label: countryObj.name }
+                                : selectedCountry;
+                              setSelectedState(newState || null);
+                              setSelectedCountry(newCountry || null);
+                              setFormData({
+                                ...formData,
+                                city: opt.label,
+                                state: stateObj ? stateObj.name : (formData.state || ""),
+                                country: countryObj ? countryObj.name : (formData.country || "")
+                              });
+                            }}
                             styles={customSelectStyles}
                           />
-                          {errors.selectedCountry && (
-                            <small className="text-danger">{errors.selectedCountry}</small>
+                          {errors.selectedCity && (
+                            <small className="text-danger">{errors.selectedCity}</small>
                           )}
                         </div>
 
+                        {/* STATE - Second */}
                         <div className="col-lg-12 col-md-12">
                           <label className="form-label small fw-bold text-uppercase text-dark">
                             State <span className="text-danger">*</span>
                           </label>
                           <Select
                           options={stateOptions}
-                          placeholder="Select State"
+                          placeholder="Type to search state..."
                           value={selectedState}
+                          isClearable
                           onChange={(opt) => {
                             if (!opt) {
                               setSelectedState(null);
                               setSelectedCity(null);
-                              setFormData({
-                                ...formData,
-                                state: "",
-                                city: ""
-                              });
+                              setFormData({ ...formData, state: "", city: "" });
                               return;
                             }
                             setSelectedState(opt);
                             setSelectedCity(null);
+                            // Auto-fill country from state
+                            const countryObj = opt.countryCode ? Country.getCountryByCode(opt.countryCode) : null;
+                            const newCountry = countryObj
+                              ? { value: countryObj.isoCode, label: countryObj.name }
+                              : selectedCountry;
+                            setSelectedCountry(newCountry || null);
                             setFormData({
                               ...formData,
                               state: opt.label,
-                              city: ""
+                              city: "",
+                              country: countryObj ? countryObj.name : (formData.country || "")
                             });
                           }}
                           styles={customSelectStyles}
@@ -766,33 +835,32 @@ function RegistrationForm() {
                         )}
                         </div>
 
+                        {/* COUNTRY - Third */}
                         <div className="col-lg-12 col-md-12">
                           <label className="form-label small fw-bold text-uppercase text-dark">
-                            City
+                            Country <span className="text-danger">*</span>
                           </label>
                           <Select
-                            options={cityOptions}
-                            placeholder="Select City"
-                            value={selectedCity}
+                            options={countryOptions}
+                            placeholder="Type to search country..."
+                            value={selectedCountry}
+                            isClearable
                             onChange={(opt) => {
                               if (!opt) {
+                                setSelectedCountry(null);
+                                setSelectedState(null);
                                 setSelectedCity(null);
-                                setFormData({
-                                  ...formData,
-                                  city: ""
-                                });
                                 return;
                               }
-                              setSelectedCity(opt);
-                              setFormData({
-                                ...formData,
-                                city: opt.label
-                              });
+                              setSelectedCountry(opt);
+                              setSelectedState(null);
+                              setSelectedCity("");
                             }}
+                            isDisabled={loadingAction}
                             styles={customSelectStyles}
                           />
-                          {errors.selectedCity && (
-                            <small className="text-danger">{errors.selectedCity}</small>
+                          {errors.selectedCountry && (
+                            <small className="text-danger">{errors.selectedCountry}</small>
                           )}
                         </div>
 

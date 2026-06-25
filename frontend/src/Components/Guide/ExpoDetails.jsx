@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { FaUsers, FaBuilding } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 function ExpoDetails() {
   const sectionRef = useRef(null);
   const [visitors, setVisitors] = useState(0);
   const [exhibitors, setExhibitors] = useState(0);
+
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -73,9 +75,9 @@ function ExpoDetails() {
               </p>
               
               <div className="btn-holder mt-5">
-                <a href="/registrationForm" className="btn-premium-gold">
+                <Link to="/" className="btn-premium-gold">
                   Exhibitor Registration
-                </a>
+                </Link>
               </div>
             </div>
           </div>

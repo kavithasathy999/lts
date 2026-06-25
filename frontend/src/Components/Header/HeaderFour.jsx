@@ -174,7 +174,7 @@ function HeaderFour() {
                 </div>
                 <div className="col-auto d-none d-xl-block">
                   <div className="header-button">
-                    <Link to="/registrationForm" className="booknow-btn">Book Now</Link>
+                    <Link to="/" className="booknow-btn">Book Now</Link>
                   </div>
                 </div>
               </div>

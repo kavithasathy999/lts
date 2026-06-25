@@ -56,10 +56,10 @@ function FooterThree() {
                                     <ul className="menu">                                      
                                         <li>
                                             <a
-                                            href="/registrationForm"
+                                            href="/"
                                             onClick={(e) => {
                                                 e.preventDefault();
-                                                navigate("/registrationForm");
+                                                navigate("/");
                                             }}
                                             >
                                             Exhibitor Registration
