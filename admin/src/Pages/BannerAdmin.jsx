@@ -53,9 +53,13 @@ function BannerAdmin() {
       file,
       preview: URL.createObjectURL(file)
     }));
+<<<<<<< HEAD
     setPreview((prev) => [...previewUrls, ...prev]);
     setCurrentPage(1);
     e.target.value = "";
+=======
+    setPreview((prev) => [...prev, ...previewUrls]);
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
   };
 
   const handleDelete = async (img, index) => {

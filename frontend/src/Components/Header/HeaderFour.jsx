@@ -104,16 +104,26 @@ function HeaderFour() {
           <div className="menu-area">
             <div className="container th-container">
               <div className="row align-items-center justify-content-between">             
+<<<<<<< HEAD
                 <div className="col-xl-3 col-auto">
+=======
+                <div className="col-auto">
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
                   <div className="header-logo">
                     <a href="/#hero" className="logo-link" onClick={(e) => handleNavClick(e, "hero")}>
                       <img src="/assets/img/normal/logo152.png" alt="LTS1" />
                     </a>
                   </div>
                 </div>
+<<<<<<< HEAD
                 {/* Navigation - Center aligned on Desktop */}
                 <div className="col-xl-6 d-none d-xl-flex justify-content-center">
                   <nav className="main-menu">
+=======
+                {/* Navigation - Hidden on Desktop (below 1200px) but also Tablet (below 1024px) */}
+                <div className="col-auto">
+                  <nav className="main-menu d-none d-xl-inline-block">
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
                     <ul>
                       <li>
                         <a
@@ -139,6 +149,14 @@ function HeaderFour() {
                               <i className="far fa-file-signature me-2"></i> For STS
                             </Link>
                           </li>
+<<<<<<< HEAD
+=======
+                          {/* <li>
+                            <Link to="/destinations">
+                              <i className="far fa-map-marked-alt me-2"></i> Destinations
+                            </Link>
+                          </li> */}
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
                         </ul>
                       </li>
                       <li>
@@ -151,21 +169,33 @@ function HeaderFour() {
                       </li>
                     </ul>
                   </nav>
+<<<<<<< HEAD
                 </div>
                 {/* Right / Hamburger Column */}
                 <div className="col-xl-3 col-auto d-flex justify-content-end align-items-center">
+=======
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
                   {/* Hamburger Button: Visible on EVERYTHING below Desktop (1200px) */}
                   <button
                     type="button"
                     className={`th-menu-toggle d-inline-block d-xl-none ${isMobileMenuOpen ? "active" : ""}`}
                     onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                     style={{ 
+<<<<<<< HEAD
                       background: "#593983", 
                       border: "none", 
                       padding: 0, 
                       outline: "none",
                       cursor: "pointer" 
                     }}
+=======
+                    background: "#593983", 
+                    border: "none", 
+                    padding: 0, 
+                    outline: "none",
+                    cursor: "pointer" 
+                  }}
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
                   >
                     <i className={isMobileMenuOpen ? "far fa-times" : "far fa-bars"}></i>
                   </button>

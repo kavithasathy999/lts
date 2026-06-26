@@ -11,6 +11,7 @@ const fs = require("fs");
 const bodyParser = require("body-parser");
 
 const app = express();
+<<<<<<< HEAD
 const allowedOrigins = [
   "https://luxurytravelshow.in",
   "https://www.luxurytravelshow.in",
@@ -32,6 +33,20 @@ app.use(cors({
     console.warn(`[CORS] Blocked request from origin: ${origin}`);
     callback(null, false);
   },
+=======
+app.use(cors({
+  origin: [
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:3001",
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "https://luxurytravelshow.in",
+    "https://www.luxurytravelshow.in",
+    "https://api.luxurytravelshow.in",
+    "https://luxurytravelshow.saitechnosolutions.com",
+    "https://luxurydashboard.saitechnosolutions.com"
+  ],
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
   credentials: true
 }));
 
@@ -184,7 +199,11 @@ const voucherStorage = multer.diskStorage({
     cb(null, path.join(__dirname, "uploads", "brochure"));
   },
   filename: (req, file, cb) => {
+<<<<<<< HEAD
     cb(null, "Golden-Travels.pdf");
+=======
+    cb(null, `${Date.now()}-${file.originalname}`);
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
   }
 });
 const uploadVoucher = multer({ storage: voucherStorage, limits: { fileSize: 50 * 1024 * 1024 } });
@@ -243,8 +262,11 @@ const buildVisitorEmailHtml = (visitor, isForAdmin, status = "Pending", qrCid = 
     statusTextHtml = `<span style="background-color: #00ff00; padding: 2px 6px; font-weight: bold; color: #000000; border-radius: 3px;">Approved</span>`;
   } else if (lStatus === "rejected" || lStatus === "rejection") {
     statusTextHtml = `<span style="background-color: #ffe6e6; padding: 2px 6px; font-weight: bold; color: #d2232a; border-radius: 3px; border: 1px solid #d2232a;">Rejected</span>`;
+<<<<<<< HEAD
   } else if (lStatus === "visited") {
     statusTextHtml = `<span style="background-color: #008000; padding: 2px 6px; font-weight: bold; color: #ffffff; border-radius: 3px;">Checked-In</span>`;
+=======
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
   } else {
     statusTextHtml = `<span style="background-color: #ffff00; padding: 2px 6px; font-weight: bold; color: #000000; border-radius: 3px;">Pending</span>`;
   }
@@ -280,9 +302,12 @@ const buildVisitorEmailHtml = (visitor, isForAdmin, status = "Pending", qrCid = 
     } else if (lStatus === "rejected" || lStatus === "rejection") {
       congratTitle = "Registration Status Update";
       bodyParagraph = `Thank you for your interest in participating in <strong style="color: #593983;">LTS 2026</strong>. After careful review by the organizing team, we regret to inform you that your registration submission has not been approved at this time. We appreciate the effort taken to submit your application and thank you for your interest in the event. For any further clarification, please feel free to contact the organizing team through the official communication channels.`;
+<<<<<<< HEAD
     } else if (lStatus === "visited") {
       congratTitle = "Luxury Travel Show 2026";
       bodyParagraph = `Thank you for visiting the <strong style="color: #593983;">LTS 2026</strong>.`;
+=======
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
     } else {
       congratTitle = "Congratulations! Your Registration has been Received!";
       bodyParagraph = `We have received your registration submission for <strong style="color: #593983;">LTS 2026</strong>. The registration is currently under review by the organizing team. Further communication and confirmation will be sent directly your registered email.`;
@@ -369,7 +394,10 @@ const buildVisitorEmailHtml = (visitor, isForAdmin, status = "Pending", qrCid = 
                   </p>
                   
                   <!-- Registration Details -->
+<<<<<<< HEAD
                   ${lStatus !== "visited" ? `
+=======
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
                   <h3 style="color: #111111; font-size: 15px; font-weight: bold; margin-top: 0; margin-bottom: 12px;">
                     Registration Details
                   </h3>
@@ -379,7 +407,11 @@ const buildVisitorEmailHtml = (visitor, isForAdmin, status = "Pending", qrCid = 
                         &bull;
                       </td>
                       <td valign="top" width="150" style="font-family: Arial, sans-serif; font-size: 14px; color: #111111; font-weight: bold; line-height: 1.6; padding: 4px 0; width: 150px;">
+<<<<<<< HEAD
                         Name:
+=======
+                        Registrant:
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
                       </td>
                       <td valign="top" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0;">
                         ${fullName}
@@ -407,6 +439,22 @@ const buildVisitorEmailHtml = (visitor, isForAdmin, status = "Pending", qrCid = 
                         ${statusTextHtml}
                       </td>
                     </tr>
+<<<<<<< HEAD
+=======
+                    ${visitorId ? `
+                    <tr>
+                      <td valign="top" width="15" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0; width: 15px;">
+                        &bull;
+                      </td>
+                      <td valign="top" width="150" style="font-family: Arial, sans-serif; font-size: 14px; color: #111111; font-weight: bold; line-height: 1.6; padding: 4px 0; width: 150px;">
+                        Visitor ID:
+                      </td>
+                      <td valign="top" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0;">
+                        ${visitorId}
+                      </td>
+                    </tr>
+                    ` : ""}
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
                     ${isForAdmin ? `
                     <tr>
                       <td valign="top" width="15" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0; width: 15px;">
@@ -467,7 +515,10 @@ const buildVisitorEmailHtml = (visitor, isForAdmin, status = "Pending", qrCid = 
                     ` : ""}
                     ` : ""}
                   </table>
+<<<<<<< HEAD
                   ` : ""}
+=======
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
                   
                   <!-- Visitor Badge / QR Code (If Approved) -->
                   ${qrCid ? `
@@ -555,7 +606,11 @@ const buildVisitorEmailHtml = (visitor, isForAdmin, status = "Pending", qrCid = 
               
               <!-- Red Bottom Bar Accent -->
               <tr>
+<<<<<<< HEAD
                 <td style="background-color: #593983; height: 10px; font-size: 1px; line-height: 1px;">
+=======
+                <td style="background-color: #d2232a; height: 10px; font-size: 1px; line-height: 1px;">
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
                   &nbsp;
                 </td>
               </tr>
@@ -706,6 +761,7 @@ app.get("/api/banner", (req, res) => {
     if (err) return res.status(500).json(err);
     db.query("SELECT * FROM event_info WHERE id=1", (err2, eventResult) => {
       if (err2) return res.status(500).json(err2);
+<<<<<<< HEAD
       const protocol = req.protocol;
       const host = req.get('host');
       const formattedSlides = slidesResult.map(slide => {
@@ -723,6 +779,10 @@ app.get("/api/banner", (req, res) => {
       });
       res.json({
         slides: formattedSlides,
+=======
+      res.json({
+        slides: slidesResult,
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
         eventInfo: eventResult[0] || {}
       });
     });
@@ -736,7 +796,11 @@ app.post("/api/banner", upload.array('slides'), (req, res) => {
     if (err) return res.status(500).json({ error: "Database error updating info" });
     if (req.files && req.files.length > 0) {
       const slideValues = req.files.map(file => [
+<<<<<<< HEAD
         `uploads/${file.filename}`
+=======
+        `${process.env.REACT_APP_API_BASE_URL}/uploads/${file.filename}`
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
       ]);
       const insertSlidesSql = "INSERT INTO slides (image) VALUES ?";
       db.query(insertSlidesSql, [slideValues], (err2) => {
@@ -774,6 +838,7 @@ app.get("/api/video", (req, res) => {
   db.query("SELECT * FROM aboutpage_video LIMIT 1", (err, result) => {
     if (err) return res.status(500).json(err);
     if (result.length === 0) return res.json({ videoUrl: "" });
+<<<<<<< HEAD
     const protocol = req.protocol;
     const host = req.get('host');
     let videoUrl = result[0].video_url;
@@ -783,13 +848,21 @@ app.get("/api/video", (req, res) => {
     const cleanPath = videoUrl.startsWith("/") ? videoUrl.substring(1) : videoUrl;
     res.json({
       videoUrl: `${protocol}://${host}/${cleanPath.replace(/\\/g, "/")}`
+=======
+    res.json({
+      videoUrl: `${process.env.REACT_APP_API_BASE_URL}/${result[0].video_url}`
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
     });
   });
 });
 
 app.post("/api/video", videoUpload.single("video"), (req, res) => {
   if (!req.file) return res.status(400).json({ error: "No file uploaded" });
+<<<<<<< HEAD
   const filePath = path.relative(__dirname, req.file.path).replace(/\\/g, "/");
+=======
+  const filePath = req.file.path;
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
   db.query("DELETE FROM aboutpage_video", (err) => {
     if (err) return res.status(500).json(err);
     db.query(
@@ -797,10 +870,15 @@ app.post("/api/video", videoUpload.single("video"), (req, res) => {
       [filePath],
       (err) => {
         if (err) return res.status(500).json(err);
+<<<<<<< HEAD
         const protocol = req.protocol;
         const host = req.get('host');
         res.json({
           videoUrl: `${protocol}://${host}/${filePath}`
+=======
+        res.json({
+          videoUrl: `${process.env.REACT_APP_API_BASE_URL}/${filePath}`
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
         });
       }
     );
@@ -824,6 +902,7 @@ app.get("/api/map", (req, res) => {
   db.query("SELECT * FROM registerform_map LIMIT 1", (err, result) => {
     if (err) return res.status(500).json(err);
     if (result.length === 0) return res.json({ mapImageUrl: "" });
+<<<<<<< HEAD
     const protocol = req.protocol;
     const host = req.get('host');
     let mapUrl = result[0].map_url;
@@ -832,12 +911,19 @@ app.get("/api/map", (req, res) => {
     }
     const cleanPath = mapUrl.startsWith("/") ? mapUrl.substring(1) : mapUrl;
     res.json({ mapImageUrl: `${protocol}://${host}/${cleanPath.replace(/\\/g, "/")}` });
+=======
+    res.json({ mapImageUrl: `${process.env.REACT_APP_API_BASE_URL}/${result[0].map_url}` });
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
   });
 });
 
 app.post("/api/map", mapUpload.single("map"), (req, res) => {
   if (!req.file) return res.status(400).json({ error: "No file uploaded" });
+<<<<<<< HEAD
   const filePath = path.relative(__dirname, req.file.path).replace(/\\/g, "/");
+=======
+  const filePath = req.file.path;
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
   db.query("SELECT * FROM registerform_map LIMIT 1", (err, result) => {
     if (err) return res.status(500).json(err);
     if (result.length > 0) {
@@ -847,9 +933,13 @@ app.post("/api/map", mapUpload.single("map"), (req, res) => {
     }
     db.query("INSERT INTO registerform_map (map_url) VALUES (?)", [filePath], (err) => {
       if (err) return res.status(500).json(err);
+<<<<<<< HEAD
       const protocol = req.protocol;
       const host = req.get('host');
       res.json({ mapImageUrl: `${protocol}://${host}/${filePath}` });
+=======
+      res.json({ mapImageUrl: `${process.env.REACT_APP_API_BASE_URL}/${filePath}` });
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
     });
   });
 });
@@ -874,6 +964,7 @@ app.get("/api/sponsors/:type", (req, res) => {
     [type],
     (err, result) => {
       if (err) return res.status(500).json(err);
+<<<<<<< HEAD
       const protocol = req.protocol;
       const host = req.get('host');
       res.json({
@@ -888,6 +979,13 @@ app.get("/api/sponsors/:type", (req, res) => {
             imageUrl: `${protocol}://${host}/${cleanPath}`
           };
         })
+=======
+      res.json({
+        sponsors: result.map(row => ({
+          id: row.id,
+          imageUrl: `${process.env.REACT_APP_API_BASE_URL}/${row.image_url.replace(/\\/g, "/")}`
+        }))
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
       });
     }
   );
@@ -897,10 +995,14 @@ app.post("/api/sponsors", sponsorUpload.array("images", 10), (req, res) => {
   const { type } = req.body;
   if (!req.files || req.files.length === 0)
     return res.status(400).json({ error: "No files uploaded" });
+<<<<<<< HEAD
   const values = req.files.map(file => [
     path.relative(__dirname, file.path).replace(/\\/g, "/"),
     type
   ]);
+=======
+  const values = req.files.map(file => [file.path, type]);
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
   db.query(
     "INSERT INTO sponsor_images (image_url, sponsor_type) VALUES ?",
     [values],
@@ -2241,8 +2343,13 @@ app.get('/api/contact', (req, res) => {
 });
 
 app.post('/api/visitors/register', visitorUpload.single("file"), async (req, res) => {
+<<<<<<< HEAD
   const { firstName, lastName, companyName, mobileNumber, designation, email, country, state, city, pincode, address1, address2, recaptchaToken } = req.body;
   const filePath = req.file ? path.relative(__dirname, req.file.path).replace(/\\/g, "/") : null;
+=======
+  const { firstName, lastName, companyName, mobileNumber, designation, email, visitorType, country, state, city, pincode, address1, address2, recaptchaToken } = req.body;
+  const filePath = req.file ? req.file.path : null;
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
   const fileName = req.file ? req.file.filename : null;
 
   if (!recaptchaToken) {
@@ -2289,9 +2396,15 @@ app.post('/api/visitors/register', visitorUpload.single("file"), async (req, res
           error: "Mobile Number is already registered"
         });
       }
+<<<<<<< HEAD
       const sql = `INSERT INTO visitors (first_name, last_name, email, mobile_number, company_name, designation, country, state, city, pincode, address1, address2, file_path, file_name) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
       db.query(sql, [firstName, lastName, email, mobileNumber, companyName, designation, country, state, city, pincode, address1, address2, filePath, fileName || null],
+=======
+      const sql = `INSERT INTO visitors (first_name, last_name, email, mobile_number, company_name, designation, visitor_type, country, state, city, pincode, address1, address2, file_path, file_name) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+      db.query(sql, [firstName, lastName, email, mobileNumber, companyName, designation, visitorType, country, state, city, pincode, address1, address2, filePath, fileName || null],
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
         (err, result) => {
           if (err) return res.status(500).json({ error: err.message });
           const visitor = {
@@ -2301,6 +2414,10 @@ app.post('/api/visitors/register', visitorUpload.single("file"), async (req, res
             email: email,
             mobile_number: mobileNumber,
             designation: designation,
+<<<<<<< HEAD
+=======
+            visitor_type: visitorType,
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
             country: country,
             state: state,
             city: city,
@@ -2743,6 +2860,13 @@ app.get("/qr-scanner", (req, res) => {
       </div>
       <div class="stats-container">
         <div class="stat-card">
+<<<<<<< HEAD
+=======
+          <div class="stat-label">Registrations</div>
+          <div id="totalRegistrations" class="stat-value">0</div>
+        </div>
+        <div class="stat-card">
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
           <div class="stat-label">Checked-in</div>
           <div id="totalScanned" class="stat-value" style="color: #27ae60;">0</div>
         </div>
@@ -2796,7 +2920,10 @@ app.get("/qr-scanner", (req, res) => {
       <script>
         let lastScan = "";
         let lastScanTime = 0;
+<<<<<<< HEAD
         let lastScannedVisitorId = null;
+=======
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
         ["click", "touchstart"].forEach(event => {
           document.body.addEventListener(event, () => {
             const success = document.getElementById("successSound");
@@ -2880,6 +3007,7 @@ app.get("/qr-scanner", (req, res) => {
           document.getElementById("detailsModal").style.display = "flex";
         }
         function closeModal() {
+<<<<<<< HEAD
           if (lastScannedVisitorId) {
             fetch(window.location.origin + "/api/send-visit-thankyou", {
               method: "POST",
@@ -2888,6 +3016,8 @@ app.get("/qr-scanner", (req, res) => {
             }).catch(err => console.error("Error sending thank you email:", err));
             lastScannedVisitorId = null;
           }
+=======
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
           document.getElementById("detailsModal").style.display = "none";
           goToInitialPage();
         }
@@ -2938,7 +3068,10 @@ app.get("/qr-scanner", (req, res) => {
           .then(res => res.json())
           .then(data => {
             if (data.message.startsWith("Visitor Name")) {
+<<<<<<< HEAD
               lastScannedVisitorId = data.visitorId;
+=======
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
               showSuccess(data.message);
               loadStats();
             }
@@ -2955,6 +3088,7 @@ app.get("/qr-scanner", (req, res) => {
           fetch(window.location.origin + "/api/visitor-stats")
             .then(res => res.json())
             .then(data => {
+<<<<<<< HEAD
               const totalScannedEl = document.getElementById("totalScanned");
               if (totalScannedEl) {
                 totalScannedEl.innerText = data.totalScanned || 0;
@@ -2963,6 +3097,10 @@ app.get("/qr-scanner", (req, res) => {
               if (totalRegEl) {
                 totalRegEl.innerText = data.totalRegistrations || 0;
               }
+=======
+              document.getElementById("totalRegistrations").innerText = data.totalRegistrations || 0;
+              document.getElementById("totalScanned").innerText = data.totalScanned || 0;
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
             })
             .catch(() => {});
         }
@@ -3095,6 +3233,7 @@ app.post("/api/scan-qr", (req, res) => {
         message: `Visitor Name: ${visitor.first_name} ${visitor.last_name}
         Company Name: ${visitor.company_name}
         Mobile Number: ${visitor.mobile_number}
+<<<<<<< HEAD
         Email Address: ${visitor.email}`,
         visitorId: visitor.id
       });
@@ -3132,6 +3271,9 @@ app.post("/api/send-visit-thankyou", (req, res) => {
         }
         console.log(`[📧 EMAIL TRIGGER] Sent Visit Thank You confirmation to ${visitor.email}`);
         return res.json({ message: "Thank you email sent successfully" });
+=======
+        Email Address: ${visitor.email}`
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
       });
     });
   });

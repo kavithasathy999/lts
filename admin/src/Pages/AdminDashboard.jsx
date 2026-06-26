@@ -97,6 +97,7 @@ function AdminDashboard() {
         </h2>
       </div>
       <div className="row g-4 constrained-row">
+<<<<<<< HEAD
         <StatCard label="Total Exhibitors (Regs)" value={stats.totalRegistrations} icon="fas fa-users" color="#4e73df" onClick={() => navigate("/admin/registrations", { state: { statusFilter: "all" } })} />
         <StatCard label="Confirmed Exhibitors" value={stats.confirmedBookings} icon="fas fa-check-circle" color="#1cc88a" onClick={() => navigate("/admin/registrations", { state: { statusFilter: "Confirmed" } })} />
         <StatCard label="Exhibitors Pending Requests" value={stats.pendingRequests} icon="fas fa-clock" color="#f6c23e" onClick={() => navigate("/admin/registrations", { state: { statusFilter: "Pending" } })} />     
@@ -106,6 +107,17 @@ function AdminDashboard() {
         <StatCard label="Total Visitors (Checked-in)" value={visitorCount || 0} icon="fas fa-eye" color="#36b9cc" onClick={() => navigate("/admin/visitors")} />
         <StatCard label="Available Stalls" value={stats.availableStalls} icon="fas fa-store" color="#593983"  onClick={() => navigate("/admin/stalls")}  />
         <StatCard label="Booked Stalls" value={stats.bookedStalls} icon="fas fa-lock" color="#e74a3b" onClick={() => navigate("/admin/registrations", { state: { statusFilter: "Confirmed" } })} />
+=======
+        <StatCard label="Total Exhibitors (Regs)" value={stats.totalRegistrations} icon="fas fa-users" color="#4e73df" onClick={() => navigate("/admin/registrations")} />
+        <StatCard label="Confirmed Exhibitors" value={stats.confirmedBookings} icon="fas fa-check-circle" color="#1cc88a" onClick={() => navigate("/admin/registrations")} />
+        <StatCard label="Exhibitors Pending Requests" value={stats.pendingRequests} icon="fas fa-clock" color="#f6c23e" onClick={() => navigate("/admin/registrations")} />     
+        <StatCard label="Total Visitors (Regs)" value={stats.totalVisitors || 0} icon="fas fa-users" color="#36b9cc" onClick={() => navigate("/admin/visitor-registrations")} />
+        <StatCard label="Confirmed Visitors"  value={stats.approvedVisitors || 0} icon="fas fa-user-check" color="#1cc88a" onClick={() => navigate("/admin/visitor-registrations")} />
+        <StatCard label="Visitor Pending Requests" value={stats.pendingVisitors || 0} icon="fas fa-user-clock" color="#f39c12" onClick={() => navigate("/admin/visitor-registrations")} />
+        <StatCard label="Total Visitors (Checked-in)" value={visitorCount || 0} icon="fas fa-eye" color="#36b9cc" onClick={() => navigate("/admin/visitors")} />
+        <StatCard label="Available Stalls" value={stats.availableStalls} icon="fas fa-store" color="#593983"  onClick={() => navigate("/admin/stalls")}  />
+        <StatCard label="Booked Stalls" value={stats.bookedStalls} icon="fas fa-lock" color="#e74a3b" onClick={() => navigate("/admin/registrations")} />
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
       </div>
     </div>
   );

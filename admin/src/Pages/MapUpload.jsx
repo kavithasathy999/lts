@@ -115,10 +115,14 @@ function MapUpload() {
           type="file"
           ref={fileRef}
           style={{ display: "none" }}
+<<<<<<< HEAD
           onChange={(e) => {
             setFile(e.target.files[0]);
             e.target.value = "";
           }}
+=======
+          onChange={(e) => setFile(e.target.files[0])}
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
           accept="image/*"
         />
 

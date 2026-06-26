@@ -2,7 +2,11 @@ import { API_BASE_URL } from "../config/api";
 import React, { useEffect, useState } from 'react';
 import { flushSync } from "react-dom";
 import { toast, ToastContainer } from 'react-toastify';
+<<<<<<< HEAD
 import { useNavigate, useLocation } from "react-router-dom";
+=======
+import { useNavigate } from "react-router-dom";
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
 import 'react-toastify/dist/ReactToastify.css';
 import { Tooltip } from "bootstrap";
 import axios from 'axios';
@@ -12,6 +16,7 @@ const VisitorRegistrations = () => {
   const [loading, setLoading] = useState(true);
   const [loadingMap, setLoadingMap] = useState({});
   const [searchNameCompany, setSearchNameCompany] = useState("");
+<<<<<<< HEAD
   const location = useLocation();
   const [searchStatusType, setSearchStatusType] = useState(() => {
     if (location.state && location.state.statusFilter) {
@@ -25,6 +30,9 @@ const VisitorRegistrations = () => {
       setSearchStatusType(location.state.statusFilter === "all" ? "" : location.state.statusFilter);
     }
   }, [location.state]);
+=======
+  const [searchStatusType, setSearchStatusType] = useState("");
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
   const [qrModalOpen, setQrModalOpen] = useState(false);
   const [selectedVisitor, setSelectedVisitor] = useState(null);
   const [rejectModalOpen, setRejectModalOpen] = useState(false);
@@ -32,12 +40,17 @@ const VisitorRegistrations = () => {
   const [visitorToReject, setVisitorToReject] = useState(null);
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
   const [selectedVisitorForAction, setSelectedVisitorForAction] = useState(null);
+<<<<<<< HEAD
   const [actionType, setActionType] = useState("");
+=======
+  const [actionType, setActionType] = useState(""); 
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [visitorToDelete, setVisitorToDelete] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+<<<<<<< HEAD
   const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
 
   useEffect(() => {
@@ -49,6 +62,8 @@ const VisitorRegistrations = () => {
     document.addEventListener("click", handleOutsideClick);
     return () => document.removeEventListener("click", handleOutsideClick);
   }, [sortDropdownOpen]);
+=======
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
   const itemsPerPage = 20;
   const navigate = useNavigate();
 
@@ -92,6 +107,7 @@ const VisitorRegistrations = () => {
   };
 
   const filteredVisitors = visitors.filter(v => {
+<<<<<<< HEAD
     const nameCompanyMatch = (
       `${v.first_name || ""} ${v.last_name || ""} ${v.company_name || ""}`
     ).toLowerCase().includes(searchNameCompany.toLowerCase());
@@ -107,6 +123,16 @@ const VisitorRegistrations = () => {
 
     return nameCompanyMatch && (statusMatch || idMatch);
   });
+=======
+    const nameCompanyMatch = (
+      `${v.first_name} ${v.last_name} ${v.company_name}`
+    ).toLowerCase().includes(searchNameCompany.toLowerCase());
+    const statusTypeMatch = (
+      `${v.status} ${v.visitor_type}`
+    ).toLowerCase().includes(searchStatusType.toLowerCase());
+    return nameCompanyMatch && statusTypeMatch;
+  });
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
 
   const totalPages = Math.ceil(filteredVisitors.length / itemsPerPage);
   const safeCurrentPage = Math.min(currentPage, totalPages || 1);
@@ -119,14 +145,24 @@ const VisitorRegistrations = () => {
       status === "approved"
         ? "Confirming visitor..."
         : status === "rejected"
+<<<<<<< HEAD
           ? "Rejecting visitor..."
           : "Moving visitor to waiting list...";
+=======
+        ? "Rejecting visitor..."
+        : "Moving visitor to waiting list...";
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
     const successMessage =
       status === "approved"
         ? "Visitor confirmed successfully"
         : status === "rejected"
+<<<<<<< HEAD
           ? "Visitor rejected successfully"
           : "Moved to Waiting List Successfully";
+=======
+        ? "Visitor rejected successfully"
+        : "Moved to Waiting List Successfully";
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
     const successType = status === "rejected" ? "error" : "success";
     setLoadingMap(prev => ({ ...prev, [`${id}_${status}`]: true }));
     const toastId = toast.loading(loadingMessage, {
@@ -142,7 +178,11 @@ const VisitorRegistrations = () => {
       const res = await axios.get(
         `${API_BASE_URL}/api/visitors/registrations`
       );
+<<<<<<< HEAD
       setVisitors(res.data);
+=======
+      setVisitors(res.data); 
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
       if (status === "rejected") closeRejectModal();
       toast.update(toastId, {
         render: successMessage,
@@ -229,16 +269,30 @@ const VisitorRegistrations = () => {
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
       canvas.width = 320;
+<<<<<<< HEAD
       canvas.height = 380;
+=======
+      canvas.height = 520;
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
       ctx.fillStyle = "#ffffff";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(img, 35, 20, 250, 250);
       ctx.textAlign = "center";
+<<<<<<< HEAD
       ctx.fillStyle = "#1e293b";
       ctx.font = "bold 22px Arial";
       ctx.fillText(fullName || "—", canvas.width / 2, 300);
       ctx.font = "bold 16px Arial";
       ctx.fillText(selectedVisitor.company_name || "—", canvas.width / 2, 335);
+=======
+      ctx.fillStyle = "#1e293b"; 
+      ctx.font = "bold 22px Arial";
+      ctx.fillText(fullName || "—", canvas.width / 2, 300);
+      ctx.font = "bold 16px Arial";
+      ctx.fillText(`${selectedVisitor.mobile_number || "—"}`, canvas.width / 2, 340);
+      ctx.fillText(`${selectedVisitor.email || "—"}`, canvas.width / 2, 370);
+      ctx.fillText(`${selectedVisitor.company_name || "—"}`, canvas.width / 2, 400);
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
       const link = document.createElement("a");
       link.download = "Visitor_QRcode.png";
       link.href = canvas.toDataURL("image/png");
@@ -286,6 +340,11 @@ const VisitorRegistrations = () => {
         <body>
           <img src="${url}" id="qrImage" />
           <div class="name">${fullName || "—"}</div>
+<<<<<<< HEAD
+=======
+          <div class="info">${selectedVisitor.mobile_number || "—"}</div>
+          <div class="info">${selectedVisitor.email || "—"}</div>
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
           <div class="info">${selectedVisitor.company_name || "—"}</div>
           <script>
             const img = document.getElementById('qrImage');
@@ -316,6 +375,7 @@ const VisitorRegistrations = () => {
       "City"
     ];
     const rows = filteredVisitors.map((v, index) => {
+<<<<<<< HEAD
       const formattedStatus = v.status
         ? v.status.charAt(0).toUpperCase() + v.status.slice(1)
         : "Pending";
@@ -337,6 +397,29 @@ const VisitorRegistrations = () => {
         .join(",");
     });
     const csvContent = "\uFEFF" + "Visitor Registrations\n\n" + headers.join(",") + "\n" + rows.join("\n");
+=======
+      const formattedStatus = v.status 
+        ? v.status.charAt(0).toUpperCase() + v.status.slice(1) 
+        : "Pending";
+        const data = [
+          index + 1,
+          `${v.first_name} ${v.last_name}`,
+          `\t${v.mobile_number || "N/A"}`, 
+          v.email || "N/A",
+          v.company_name || "N/A",
+          v.country || "N/A",
+          v.state || "N/A",
+          v.city || "N/A"
+        ];
+      return data
+        .map(value => {
+          const stringValue = String(value).replace(/"/g, '""'); 
+          return `"${stringValue}"`; 
+        })
+        .join(",");
+    });
+    const csvContent ="\uFEFF" + "Visitor Registrations\n\n" + headers.join(",") + "\n" + rows.join("\n");
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -367,6 +450,7 @@ const VisitorRegistrations = () => {
             <div className="d-flex justify-content-between align-items-center mb-3">
               <div className="d-flex justify-content-between align-items-center mb-2 w-100" style={{ fontFamily: "'Montserrat', sans-serif" }}>
                 <h2 className="text-dark fw-bold m-0">Visitor Registrations</h2>
+<<<<<<< HEAD
                 <div className="d-flex align-items-center gap-2 sort-dropdown-container">
                   <div className="dropdown" style={{ position: "relative" }}>
                     <button
@@ -393,6 +477,14 @@ const VisitorRegistrations = () => {
                     <i className="fas fa-arrow-left me-1"></i> Back
                   </button>
                 </div>
+=======
+                <button
+                  className="btn btn-outline-secondary btn-sm"
+                  onClick={() => navigate(-1)}
+                >
+                  <i className="fas fa-arrow-left me-1"></i> Back
+                </button>
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
               </div>
             </div>
             <div className="row g-3 align-items-center">
@@ -423,7 +515,11 @@ const VisitorRegistrations = () => {
                 <div className="position-relative">
                   <input
                     type="text"
+<<<<<<< HEAD
                     placeholder="Search Status"
+=======
+                    placeholder="Search Visitor Type / Status"
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
                     value={searchStatusType}
                     onChange={(e) => setSearchStatusType(e.target.value)}
                     className="form-control"
@@ -469,10 +565,17 @@ const VisitorRegistrations = () => {
                 <thead>
                   <tr>
                     <th>S No</th>
+<<<<<<< HEAD
                     <th>Visitor Id</th>
                     <th>Person Name</th>
                     <th>Company Name</th>
                     <th>Mobile Number</th>
+=======
+                    <th>Person Name</th>
+                    <th>Company Name</th>
+                    <th>Mobile Number</th>
+                    <th>Visitor Type</th>
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
                     <th>Status</th>
                     <th>Actions</th>
                   </tr>
@@ -482,10 +585,17 @@ const VisitorRegistrations = () => {
                     paginatedVisitors.map((v, index) => (
                       <tr key={v.id}>
                         <td>{indexOfFirstItem + index + 1}</td>
+<<<<<<< HEAD
                         <td>{v.status === "approved" ? v.visitor_id : "-"}</td>
                         <td>{`${v.first_name} ${v.last_name}`}</td>
                         <td>{v.company_name}</td>
                         <td>{formatPhoneNumber(v.mobile_number)}</td>
+=======
+                        <td>{`${v.first_name} ${v.last_name}`}</td>
+                        <td>{v.company_name}</td>
+                        <td>{formatPhoneNumber(v.mobile_number)}</td>        
+                        <td>{v.visitor_type || "N/A"}</td>
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
                         <td>
                           {v.status === "approved" ? (
                             <span className="badge bg-success" style={{ fontSize: "14px", padding: "6px 10px" }}>
@@ -547,8 +657,13 @@ const VisitorRegistrations = () => {
                             <button
                               className="btn btn-sm btn-warning me-1"
                               disabled={
+<<<<<<< HEAD
                                 v.status === "approved" ||
                                 v.status === "rejected" ||
+=======
+                                v.status === "approved" || 
+                                v.status === "rejected" || 
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
                                 loadingMap[`${v.id}_waiting list`]
                               }
                               onClick={() => {
@@ -588,7 +703,11 @@ const VisitorRegistrations = () => {
                     ))
                   ) : (
                     <tr>
+<<<<<<< HEAD
                       <td colSpan="7" className="text-center">
+=======
+                      <td colSpan="8" className="text-center">
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
                         No matching records
                       </td>
                     </tr>
@@ -622,6 +741,7 @@ const VisitorRegistrations = () => {
         </div>
       </div>
       {qrModalOpen && selectedVisitor && (
+<<<<<<< HEAD
         <div
           className="modal d-block"
           style={{ background: "rgba(0,0,0,0.7)", backdropFilter: "blur(4px)" }}
@@ -779,11 +899,157 @@ const VisitorRegistrations = () => {
                 ) : (
                   <button
                     className="btn btn-success px-4"
+=======
+      <div
+        className="modal d-block"
+        style={{ background: "rgba(0,0,0,0.7)", backdropFilter: "blur(4px)" }}
+      >
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content p-4 text-center position-relative" style={{ borderRadius: "20px", border: "none", boxShadow: "0 10px 30px rgba(0,0,0,0.2)" }}>
+            <button
+              onClick={closeQRModal}
+              style={{
+                position: "absolute",
+                top: 15,
+                right: 15,
+                border: "none",
+                background: "#fee2e2",
+                fontSize: 18,
+                width: "32px",
+                height: "32px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: "50%",
+                cursor: "pointer",
+                color: "#dc2626",
+                transition: "0.3s"
+              }}
+            >
+              ✕
+            </button>
+            <div className="mb-4" style={{ background: "#fff", padding: "10px", display: "inline-block", borderRadius: "15px", boxShadow: "0 4px 12px rgba(0,0,0,0.05)" }}>
+              <img
+                src={`${API_BASE_URL}/qrcodes/${selectedVisitor.qr_code}`}
+                alt="QR Code"
+                style={{ width: "220px", height: "220px", objectFit: "contain", display: "inline-block" }}
+                onError={(e) => {
+                  console.error("QR Image failed to load:", e.target.src);
+                  e.target.src = "https://via.placeholder.com/250?text=QR+Not+Found";
+                }}
+              />
+            </div>
+            <div style={{ 
+              background: "#f8fafc", 
+              padding: "20px", 
+              borderRadius: "15px", 
+              textAlign: "left",
+              border: "1px solid #e2e8f0" 
+            }}>
+              {[
+                { label: "Name", value: `${selectedVisitor.first_name} ${selectedVisitor.last_name}` },
+                { label: "Mobile", value: selectedVisitor.mobile_number },
+                { label: "Email", value: selectedVisitor.email },
+                { label: "Company", value: selectedVisitor.company_name }
+              ].map((item, index) => (
+                <div key={index} style={{ 
+                  display: "flex",                
+                  justifyContent: "left",
+                  alignItems: "center",          
+                  marginBottom: index !== 3 ? "12px" : "0",
+                  borderBottom: index !== 3 ? "1px dashed #e2e8f0" : "none", 
+                  paddingBottom: index !== 3 ? "8px" : "0"
+                }}>
+                  <span style={{ 
+                    fontSize: "15px",            
+                    fontWeight: "800", 
+                    color: "#627c9f", 
+                    textTransform: "uppercase",
+                    letterSpacing: "0.5px"
+                  }}>
+                    {item.label}:
+                  </span>
+                  <span style={{ 
+                    fontSize: "15px", 
+                    fontWeight: "600", 
+                    color: "#1e293b",
+                    textAlign: "left", 
+                    marginLeft: "5px"            
+                  }}>
+                    {item.value || "—"}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <div className="mt-4 d-flex justify-content-center gap-3">
+              <button 
+                className="btn btn-primary px-4" 
+                onClick={printQR}
+                style={{ borderRadius: "10px", fontWeight: "600", padding: "10px 25px" }}
+              >
+                Print
+              </button>
+              <button 
+                className="btn btn-success px-4" 
+                onClick={downloadQR}
+                style={{ borderRadius: "10px", fontWeight: "600", padding: "10px 25px" }}
+              >
+                Download
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
+    {confirmModalOpen && selectedVisitorForAction && (
+      <div 
+        className="modal d-block" 
+        style={{ 
+          background: "rgba(0,0,0,0.6)", 
+          zIndex: 1050,
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          overflow: "auto"
+        }}
+      >
+        <div className="modal-dialog" style={{ marginTop: "25px" }}>
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title fw-bold">
+                {actionType === "waiting list"
+                  ? "Are you want to move to Waiting List?"
+                  : "Are you sure want to confirm?"}
+              </h5>
+              <button 
+                type="button" 
+                className="btn-close" 
+                onClick={() => setConfirmModalOpen(false)}
+              ></button>
+            </div>
+            <div className="modal-footer">
+              <button 
+                className="btn btn-secondary" 
+                onClick={() => setConfirmModalOpen(false)}
+              >
+                Cancel
+              </button>
+              {actionType === "waiting list" ? (
+                <>
+                  <button 
+                    className="btn btn-warning px-4"
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
                     disabled={confirmLoading}
                     onClick={async () => {
                       setConfirmLoading(true);
                       try {
+<<<<<<< HEAD
                         await updateStatus(selectedVisitorForAction.id, actionType);
+=======
+                        await updateStatus(selectedVisitorForAction.id, "waiting list");
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
                         setConfirmModalOpen(false);
                       } catch (err) {
                         console.error(err);
@@ -794,6 +1060,7 @@ const VisitorRegistrations = () => {
                   >
                     {confirmLoading ? "Please wait..." : "Confirm"}
                   </button>
+<<<<<<< HEAD
                 )}
               </div>
             </div>
@@ -806,6 +1073,39 @@ const VisitorRegistrations = () => {
           className="modal d-block"
           style={{
             background: "rgba(0,0,0,0.6)",
+=======
+                </>
+              ) : (
+              <button 
+                className="btn btn-success px-4"
+                disabled={confirmLoading}
+                onClick={async () => {
+                  setConfirmLoading(true);
+                  try {
+                    await updateStatus(selectedVisitorForAction.id, actionType);
+                    setConfirmModalOpen(false);
+                  } catch (err) {
+                    console.error(err);
+                  } finally {
+                    setConfirmLoading(false);
+                  }
+                }}
+              >
+                {confirmLoading ? "Please wait..." : "Confirm"}
+              </button>
+            )}
+          </div>
+          </div>
+        </div>
+      </div>
+    )}
+
+      {rejectModalOpen && (
+       <div 
+          className="modal d-block" 
+          style={{ 
+            background: "rgba(0,0,0,0.6)", 
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
             zIndex: 1050,
             position: "fixed",
             top: 0,
@@ -834,8 +1134,13 @@ const VisitorRegistrations = () => {
               </div>
               <div className="modal-footer border-0">
                 <button className="btn btn-secondary" onClick={closeRejectModal}>Cancel</button>
+<<<<<<< HEAD
                 <button
                   className="btn btn-danger px-4"
+=======
+                <button 
+                  className="btn btn-danger px-4" 
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
                   disabled={loadingMap[`${visitorToReject?.id}_rejected`]}
                   onClick={() => updateStatus(visitorToReject.id, "rejected", rejectionNotes)}
                 >
@@ -848,10 +1153,17 @@ const VisitorRegistrations = () => {
       )}
 
       {deleteModalOpen && visitorToDelete && (
+<<<<<<< HEAD
         <div
           className="modal d-block"
           style={{
             background: "rgba(0,0,0,0.6)",
+=======
+        <div 
+          className="modal d-block" 
+          style={{ 
+            background: "rgba(0,0,0,0.6)", 
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
             zIndex: 1050,
             position: "fixed",
             top: 0,
@@ -867,15 +1179,26 @@ const VisitorRegistrations = () => {
                 <h5 className="modal-title fw-bold">
                   Are you sure you want to delete?
                 </h5>
+<<<<<<< HEAD
                 <button
                   type="button"
                   className="btn-close"
+=======
+                <button 
+                  type="button" 
+                  className="btn-close" 
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
                   onClick={closeDeleteModal}
                 ></button>
               </div>
               <div className="modal-footer">
+<<<<<<< HEAD
                 <button
                   className="btn btn-secondary"
+=======
+                <button 
+                  className="btn btn-secondary" 
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
                   onClick={closeDeleteModal}
                 >
                   Cancel

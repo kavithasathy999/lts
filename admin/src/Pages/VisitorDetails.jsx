@@ -67,6 +67,13 @@ const VisitorDetails = () => {
                   <td>{visitor.designation || "-"}</td>
                 </tr>
                 <tr>
+<<<<<<< HEAD
+=======
+                  <th className="bg-light">Visitor Type</th>
+                  <td>{visitor.visitor_type || "-"}</td>
+                </tr>
+                <tr>
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
                   <th className="bg-light">Address Line 1</th>
                   <td>{visitor.address1 || "-"}</td>
                 </tr>

@@ -1,13 +1,18 @@
 import { API_BASE_URL } from "../config/api";
 import React, { useState, useEffect } from "react";
 import { flushSync } from "react-dom";
+<<<<<<< HEAD
 import { useNavigate, useLocation } from "react-router-dom";
+=======
+import { useNavigate } from "react-router-dom";
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
 import { Tooltip } from "bootstrap";
 import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
 
 function RegistrationList() {
   const [search, setSearch] = useState("");
+<<<<<<< HEAD
   const location = useLocation();
   const [filter, setFilter] = useState(() => {
     if (location.state && location.state.statusFilter) {
@@ -21,6 +26,9 @@ function RegistrationList() {
       setFilter(location.state.statusFilter === "all" ? "" : location.state.statusFilter);
     }
   }, [location.state]);
+=======
+  const [filter, setFilter] = useState("");
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
   const [data, setData] = useState([]);
   const [loadingAction, setLoadingAction] = useState("");
   const [modalType, setModalType] = useState("");
@@ -641,7 +649,10 @@ function RegistrationList() {
           <input
             className="form-control"
             placeholder="Search Date / Status"
+<<<<<<< HEAD
             value={filter}
+=======
+>>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
             onChange={(e) => setFilter(e.target.value)}
             style={{ height: "65px", paddingRight: "35px" }}
           />
