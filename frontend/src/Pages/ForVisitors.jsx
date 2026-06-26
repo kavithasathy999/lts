@@ -464,27 +464,28 @@ function ForVisitors() {
             </div>
             <div className="col-lg-6">
               <h2 className="fw-bold mb-3 visitors-title">
-                Our Visitors
+                Luxury Travel Show Visitor Registration 
               </h2>
               <p className="text-dark visitors-text">
-                Our Travel Event attracts a diverse and influential audience from across the globe, bringing together travel enthusiasts, industry leaders, investors, and decision-makers under one roof.
+                We Travel Agent Association of Coimbatore happy to invite you  for the trade visitor registration for our  2nd Edition of Luxury Travel Show – 2026 to be held on 01st August 2026 at Hotel Merlis , Avinashi Road, Gold Wins , Coimbatore- 641014 .
               </p>
               <p className="text-dark visitors-text">
-                From tourism boards and luxury resort representatives to adventure seekers and corporate buyers, our visitors are actively exploring new destinations, partnerships, and opportunities in the evolving travel landscape.
+              Visit and explore the Luxury B2B travel show at LTS 2026. Meet more than 85 Plus exhibitors from more than 10 countries and Major Indian States & Union Territories ensuring a remarkable networking and business experience with the best in the travel Industry.
               </p>
               <p className="text-dark visitors-text">
-                This dynamic mix of attendees creates a powerful networking environment, making the event a premier platform for discovering global travel trends, building connections, and unlocking business growth.
+                Trade visitor registration 
               </p>
+             
               <div className="mt-4 d-flex justify-content-center justify-content-lg-start">
                 <span className="visitor-badge">
-                    Global Audience • Premium Networking • Business Growth
+                     Do Not Miss Out !!!!
                 </span>
             </div>
             </div>
           </div>
         </div>
       </section>
-      <WhoShouldExhibit />
+      {/* <WhoShouldExhibit /> */}
 
       <section className="registration-section py-5">
         <div className="container">

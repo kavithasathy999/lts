@@ -172,11 +172,11 @@ function HeaderFour() {
                     <i className={isMobileMenuOpen ? "far fa-times" : "far fa-bars"}></i>
                   </button>
                 </div>
-                <div className="col-auto d-none d-xl-block">
+                {/* <div className="col-auto d-none d-xl-block">
                   <div className="header-button">
                     <Link to="/" className="booknow-btn">Book Now</Link>
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
@@ -273,7 +273,7 @@ function HeaderFour() {
               </Link>
             </li>
           </ul>
-          <div className="mobile-drawer__footer">
+          {/* <div className="mobile-drawer__footer">
             <Link
               to="/registrationForm"
               className="booknow-btn w-100 text-center"
@@ -284,7 +284,7 @@ function HeaderFour() {
             >
               Book Now
             </Link>
-          </div>
+          </div> */}
         </div>
       </div>
     </>

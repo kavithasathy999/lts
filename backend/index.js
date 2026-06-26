@@ -25,6 +25,8 @@ app.use(cors({
   ],
   credentials: true
 }));
+
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -37,6 +39,19 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS,
   },
 });
+
+// ── Mail Connection Check at Startup ──────────────────────────────────
+transporter.verify((error, success) => {
+  if (error) {
+    console.error(`\x1b[31m[📧 MAIL] ❌ SMTP Connection FAILED:\x1b[0m`, error.message);
+    console.error(`\x1b[31m         Check EMAIL_USER and EMAIL_PASS in .env\x1b[0m`);
+  } else {
+    console.log(`\x1b[32m[📧 MAIL] ✅ SMTP Connected — Ready to send emails\x1b[0m`);
+    console.log(`\x1b[32m         FROM: ${process.env.EMAIL_USER}\x1b[0m`);
+    console.log(`\x1b[32m         ADMIN: ${process.env.ADMIN_EMAIL}\x1b[0m`);
+  }
+});
+// ─────────────────────────────────────────────────────────────────────
 
 const EMAIL_LOGO_CID = "lts-logo152";
 const emailLogoPath = path.join(__dirname, "logo152.png");
@@ -165,9 +180,14 @@ const voucherStorage = multer.diskStorage({
 });
 const uploadVoucher = multer({ storage: voucherStorage, limits: { fileSize: 50 * 1024 * 1024 } });
 
+const visitorUploadDir = path.join(__dirname, "uploads", "visitors");
+if (!require("fs").existsSync(visitorUploadDir)) {
+  require("fs").mkdirSync(visitorUploadDir, { recursive: true });
+}
+
 const visitorStorage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "uploads/visitors");
+    cb(null, visitorUploadDir);
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + path.extname(file.originalname));
@@ -208,19 +228,14 @@ const buildVisitorEmailHtml = (visitor, isForAdmin, status = "Pending", qrCid = 
   const address2 = vis.address2 || "";
 
   // Dynamic status styling
-  let statusText = "Registration Pending";
-  let statusColor = "#666666";
-
   const lStatus = status.toLowerCase();
-  if (lStatus === "approved") {
-    statusText = "Registration Approved";
-    statusColor = "#593983"; // Requested color
-  } else if (lStatus === "rejected") {
-    statusText = "Registration Rejected";
-    statusColor = "red"; // Requested color
+  let statusTextHtml = "";
+  if (lStatus === "approved" || lStatus === "approval") {
+    statusTextHtml = `<span style="background-color: #00ff00; padding: 2px 6px; font-weight: bold; color: #000000; border-radius: 3px;">Approved</span>`;
+  } else if (lStatus === "rejected" || lStatus === "rejection") {
+    statusTextHtml = `<span style="background-color: #ffe6e6; padding: 2px 6px; font-weight: bold; color: #d2232a; border-radius: 3px; border: 1px solid #d2232a;">Rejected</span>`;
   } else {
-    statusText = "Registration Pending";
-    statusColor = "#666666";
+    statusTextHtml = `<span style="background-color: #ffff00; padding: 2px 6px; font-weight: bold; color: #000000; border-radius: 3px;">Pending</span>`;
   }
 
   // Address parts and formatting
@@ -237,26 +252,26 @@ const buildVisitorEmailHtml = (visitor, isForAdmin, status = "Pending", qrCid = 
   let bodyParagraph = "";
 
   if (isForAdmin) {
-    if (lStatus === "approved") {
+    if (lStatus === "approved" || lStatus === "approval") {
       congratTitle = "Visitor Registration - Approved";
-      bodyParagraph = `We are pleased to inform you that the registration submission for <strong>${fullName}</strong> from <strong>${companyName}</strong> has been approved.`;
-    } else if (lStatus === "rejected") {
+      bodyParagraph = `We are pleased to inform you that the registration submission for <strong style="color: #593983;">${fullName}</strong> from <strong>${companyName}</strong> has been approved.`;
+    } else if (lStatus === "rejected" || lStatus === "rejection") {
       congratTitle = "Visitor Registration - Rejected";
-      bodyParagraph = `Please note that the registration submission for <strong>${fullName}</strong> from <strong>${companyName}</strong> has been rejected.`;
+      bodyParagraph = `Please note that the registration submission for <strong style="color: #593983;">${fullName}</strong> from <strong>${companyName}</strong> has been rejected.`;
     } else {
       congratTitle = `Congratulations! You've Received a New Visitor Registration!`;
-      bodyParagraph = `We have received a registration submission from <strong>${companyName}</strong> for LTS 2026. The registration is currently under review by the organizing team. Further communication and confirmation will be sent directly to the registered email address upon completion of the evaluation process.`;
+      bodyParagraph = `We have received a registration submission from <strong>${companyName}</strong> for <strong style="color: #593983;">LTS 2026</strong>. The registration is currently under review by the organizing team. Further communication and confirmation will be sent directly to the registered email address upon completion of the evaluation process.`;
     }
   } else {
-    if (lStatus === "approved") {
+    if (lStatus === "approved" || lStatus === "approval") {
       congratTitle = "Congratulations! Your Registration has been Approved!";
-      bodyParagraph = "We are pleased to inform you that your registration submission for LTS 2026 has been successfully reviewed and approved by the organizing team. Your participation has been confirmed, and we look forward to welcoming you to the event. Further details, including event guidelines and schedules, will be shared with you through your registered email address.";
-    } else if (lStatus === "rejected") {
+      bodyParagraph = `We are pleased to inform you that your registration submission for <strong style="color: #593983;">LTS 2026</strong> has been successfully reviewed and approved by the organizing team. Your participation has been confirmed, and we look forward to welcoming you to the LTS event on 01st August 2026.`;
+    } else if (lStatus === "rejected" || lStatus === "rejection") {
       congratTitle = "Registration Status Update";
-      bodyParagraph = "Thank you for your interest in participating in LTS 2026. After careful review by the organizing team, we regret to inform you that your registration submission has not been approved at this time. We appreciate the effort taken to submit your application and thank you for your interest in the event. For any further clarification, please feel free to contact the organizing team through the official communication channels.";
+      bodyParagraph = `Thank you for your interest in participating in <strong style="color: #593983;">LTS 2026</strong>. After careful review by the organizing team, we regret to inform you that your registration submission has not been approved at this time. We appreciate the effort taken to submit your application and thank you for your interest in the event. For any further clarification, please feel free to contact the organizing team through the official communication channels.`;
     } else {
       congratTitle = "Congratulations! Your Registration has been Received!";
-      bodyParagraph = `We have received a registration submission from <strong>${companyName}</strong> for LTS 2026. The registration is currently under review by the organizing team. Further communication and confirmation will be sent directly to the registered email address upon completion of the evaluation process.`;
+      bodyParagraph = `We have received your registration submission for <strong style="color: #593983;">LTS 2026</strong>. The registration is currently under review by the organizing team. Further communication and confirmation will be sent directly your registered email.`;
     }
   }
 
@@ -307,17 +322,13 @@ const buildVisitorEmailHtml = (visitor, isForAdmin, status = "Pending", qrCid = 
           <td align="center" style="padding: 10px 0;">
             <table class="email-card" border="0" cellpadding="0" cellspacing="0" width="600" style="border-collapse: collapse; background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 6px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
               
-              <!-- Header Row -->
+              <!-- Header Row (Centered Logo) -->
               <tr>
-                <td style="padding: 25px 30px 20px 30px; border-bottom: 1px solid #eeeeee;">
-                  <table border="0" cellpadding="0" cellspacing="0" style="border-collapse: collapse;">
+                <td align="center" style="padding: 25px 30px 20px 30px; border-bottom: 1px solid #eeeeee;">
+                  <table border="0" cellpadding="0" cellspacing="0" style="margin: 0 auto;">
                     <tr>
-                      <td align="left" width="80" style="vertical-align: middle; padding-right: 15px; width: 80px;">
-                        <img src="cid:${EMAIL_LOGO_CID}" width="70" alt="LTS Logo" style="display: block; width: 70px; height: auto; border: 0; outline: none;" />
-                      </td>
-                      <td align="left" style="vertical-align: middle; font-family: Arial, sans-serif;">
-                        <span style="color: #666666; font-size: 18px; font-weight: normal; line-height: 1.2; display: block;">Organized by</span>
-                        <span style="color: #d2232a; font-size: 26px; font-weight: bold; line-height: 1.2; display: block;">TAAC</span>
+                      <td align="center">
+                        <img src="cid:${EMAIL_LOGO_CID}" width="120" alt="LTS Logo" style="display: block; width: 120px; height: auto; border: 0; outline: none;" />
                       </td>
                     </tr>
                   </table>
@@ -329,13 +340,13 @@ const buildVisitorEmailHtml = (visitor, isForAdmin, status = "Pending", qrCid = 
                 <td class="email-body" style="padding: 30px 30px 20px 30px; font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6;">
                   
                   <!-- Title -->
-                  <h2 style="color: #d2232a; font-size: 18px; font-weight: bold; margin-top: 0; margin-bottom: 20px; line-height: 1.3;">
+                  <h2 style="color: #593983; font-size: 18px; font-weight: bold; margin-top: 0; margin-bottom: 20px; line-height: 1.3;">
                     ${congratTitle}
                   </h2>
                   
                   <!-- Salutation -->
                   <p style="margin-top: 0; margin-bottom: 15px;">
-                    Hi <strong style="color: #111111;">${isForAdmin ? 'Admin' : fullName}</strong>,
+                    Dear <strong style="color: #593983;">${isForAdmin ? 'Admin' : fullName}</strong>,
                   </p>
                   
                   <!-- Main Paragraph -->
@@ -344,145 +355,140 @@ const buildVisitorEmailHtml = (visitor, isForAdmin, status = "Pending", qrCid = 
                   </p>
                   
                   <!-- Registration Details -->
-                  <h3 style="color: #d2232a; font-size: 15px; font-weight: bold; margin-top: 0; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;">
+                  <h3 style="color: #111111; font-size: 15px; font-weight: bold; margin-top: 0; margin-bottom: 12px;">
                     Registration Details
                   </h3>
                   <table border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse; margin-bottom: 25px; width: 100%;">
                     <tr>
-                      <td valign="top" width="15" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 3px 0; width: 15px;">
+                      <td valign="top" width="15" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0; width: 15px;">
                         &bull;
                       </td>
-                      <td valign="top" width="95" style="font-family: Arial, sans-serif; font-size: 14px; color: #111111; font-weight: bold; line-height: 1.6; padding: 3px 0; width: 95px;">
+                      <td valign="top" width="150" style="font-family: Arial, sans-serif; font-size: 14px; color: #111111; font-weight: bold; line-height: 1.6; padding: 4px 0; width: 150px;">
                         Registrant:
                       </td>
-                      <td valign="top" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 3px 0;">
+                      <td valign="top" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0;">
                         ${fullName}
                       </td>
                     </tr>
                     <tr>
-                      <td valign="top" width="15" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 3px 0; width: 15px;">
+                      <td valign="top" width="15" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0; width: 15px;">
                         &bull;
                       </td>
-                      <td valign="top" width="95" style="font-family: Arial, sans-serif; font-size: 14px; color: #111111; font-weight: bold; line-height: 1.6; padding: 3px 0; width: 95px;">
+                      <td valign="top" width="150" style="font-family: Arial, sans-serif; font-size: 14px; color: #111111; font-weight: bold; line-height: 1.6; padding: 4px 0; width: 150px;">
                         Company:
                       </td>
-                      <td valign="top" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 3px 0;">
+                      <td valign="top" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0;">
                         ${companyName}
                       </td>
                     </tr>
                     <tr>
-                      <td valign="top" width="15" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 3px 0; width: 15px;">
+                      <td valign="top" width="15" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0; width: 15px;">
                         &bull;
                       </td>
-                      <td valign="top" width="95" style="font-family: Arial, sans-serif; font-size: 14px; color: #111111; font-weight: bold; line-height: 1.6; padding: 3px 0; width: 95px;">
-                        Status:
+                      <td valign="top" width="150" style="font-family: Arial, sans-serif; font-size: 14px; color: #111111; font-weight: bold; line-height: 1.6; padding: 4px 0; width: 150px;">
+                        Registration Status:
                       </td>
-                      <td valign="top" style="font-family: Arial, sans-serif; font-size: 14px; color: #111111; font-weight: bold; line-height: 1.6; padding: 3px 0;">
-                        Registration ${lStatus === "approved" || lStatus === "approval" ? `<span style="color: #593983;">Approved</span>` : (lStatus === "rejected" || lStatus === "rejection" ? `<span style="color: red;">Rejected</span>` : `<span style="color: #e6b800;">Pending</span>`)}
+                      <td valign="top" style="font-family: Arial, sans-serif; font-size: 14px; color: #111111; line-height: 1.6; padding: 4px 0;">
+                        ${statusTextHtml}
                       </td>
                     </tr>
                     ${visitorId ? `
                     <tr>
-                      <td valign="top" width="15" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 3px 0; width: 15px;">
+                      <td valign="top" width="15" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0; width: 15px;">
                         &bull;
                       </td>
-                      <td valign="top" width="95" style="font-family: Arial, sans-serif; font-size: 14px; color: #111111; font-weight: bold; line-height: 1.6; padding: 3px 0; width: 95px;">
+                      <td valign="top" width="150" style="font-family: Arial, sans-serif; font-size: 14px; color: #111111; font-weight: bold; line-height: 1.6; padding: 4px 0; width: 150px;">
                         Visitor ID:
                       </td>
-                      <td valign="top" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 3px 0;">
+                      <td valign="top" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0;">
                         ${visitorId}
                       </td>
                     </tr>
                     ` : ""}
-                  </table>
-                  
-                  <!-- Contact Information -->
-                  <h3 style="color: #111111; font-size: 14px; font-weight: bold; margin-top: 0; margin-bottom: 10px;">
-                    Contact Information:
-                  </h3>
-                  <table border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse; margin-bottom: 25px; width: 100%;">
+                    ${isForAdmin ? `
                     <tr>
-                      <td valign="top" width="15" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 3px 0; width: 15px;">
+                      <td valign="top" width="15" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0; width: 15px;">
                         &bull;
                       </td>
-                      <td valign="top" width="115" style="font-family: Arial, sans-serif; font-size: 14px; color: #111111; font-weight: bold; line-height: 1.6; padding: 3px 0; width: 115px;">
+                      <td valign="top" width="150" style="font-family: Arial, sans-serif; font-size: 14px; color: #111111; font-weight: bold; line-height: 1.6; padding: 4px 0; width: 150px;">
                         Email Address:
                       </td>
-                      <td valign="top" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 3px 0; word-break: break-all;">
+                      <td valign="top" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0; word-break: break-all;">
                         ${email}
                       </td>
                     </tr>
                     <tr>
-                      <td valign="top" width="15" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 3px 0; width: 15px;">
+                      <td valign="top" width="15" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0; width: 15px;">
                         &bull;
                       </td>
-                      <td valign="top" width="115" style="font-family: Arial, sans-serif; font-size: 14px; color: #111111; font-weight: bold; line-height: 1.6; padding: 3px 0; width: 115px;">
+                      <td valign="top" width="150" style="font-family: Arial, sans-serif; font-size: 14px; color: #111111; font-weight: bold; line-height: 1.6; padding: 4px 0; width: 150px;">
                         Mobile Number:
                       </td>
-                      <td valign="top" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 3px 0;">
+                      <td valign="top" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0;">
                         ${mobileNumber}
                       </td>
                     </tr>
                     <tr>
-                      <td valign="top" width="15" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 3px 0; width: 15px;">
+                      <td valign="top" width="15" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0; width: 15px;">
                         &bull;
                       </td>
-                      <td valign="top" width="115" style="font-family: Arial, sans-serif; font-size: 14px; color: #111111; font-weight: bold; line-height: 1.6; padding: 3px 0; width: 115px;">
+                      <td valign="top" width="150" style="font-family: Arial, sans-serif; font-size: 14px; color: #111111; font-weight: bold; line-height: 1.6; padding: 4px 0; width: 150px;">
                         Designation:
                       </td>
-                      <td valign="top" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 3px 0;">
+                      <td valign="top" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0;">
                         ${designation}
                       </td>
                     </tr>
                     <tr>
-                      <td valign="top" width="15" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 3px 0; width: 15px;">
+                      <td valign="top" width="15" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0; width: 15px;">
                         &bull;
                       </td>
-                      <td valign="top" width="115" style="font-family: Arial, sans-serif; font-size: 14px; color: #111111; font-weight: bold; line-height: 1.6; padding: 3px 0; width: 115px;">
+                      <td valign="top" width="150" style="font-family: Arial, sans-serif; font-size: 14px; color: #111111; font-weight: bold; line-height: 1.6; padding: 4px 0; width: 150px;">
                         Address:
                       </td>
-                      <td valign="top" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 3px 0;">
+                      <td valign="top" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0;">
                         ${fullAddress}
                       </td>
                     </tr>
                     ${notes ? `
                     <tr>
-                      <td valign="top" width="15" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 3px 0; width: 15px;">
+                      <td valign="top" width="15" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0; width: 15px;">
                         &bull;
                       </td>
-                      <td valign="top" width="115" style="font-family: Arial, sans-serif; font-size: 14px; color: #111111; font-weight: bold; line-height: 1.6; padding: 3px 0; width: 115px;">
+                      <td valign="top" width="150" style="font-family: Arial, sans-serif; font-size: 14px; color: #111111; font-weight: bold; line-height: 1.6; padding: 4px 0; width: 150px;">
                         Comments:
                       </td>
-                      <td valign="top" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 3px 0;">
+                      <td valign="top" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0;">
                         ${notes}
                       </td>
                     </tr>
                     ` : ""}
+                    ` : ""}
                   </table>
                   
-                  <!-- QR Code (If Approved) -->
+                  <!-- Visitor Badge / QR Code (If Approved) -->
                   ${qrCid ? `
-                  <div style="margin: 25px 0; text-align: center; padding: 20px; border: 1px solid #eeeeee; border-radius: 8px; background-color: #fafafa;">
-                    <div style="color: #d2232a; font-size: 11px; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; font-weight: bold;">
-                      Official Visitor QRCode
-                    </div>
-                    <img src="cid:${qrCid}" alt="QR Code" width="160" height="160" style="border: 1px solid #dddddd; padding: 5px; display: inline-block; background-color: #ffffff;" />
-                    <div style="color: #555555; font-size: 13px; margin-top: 10px; font-weight: bold;">
+                  <div style="margin: 25px 0; text-align: center;">
+                    <h3 style="color: #111111; font-size: 15px; font-weight: bold; margin-top: 0; margin-bottom: 12px; text-align: center;">
+                      Visitor Badge
+                    </h3>
+                    <img src="cid:${qrCid}" alt="QR Code" width="140" height="140" style="border: 1px solid #dddddd; padding: 5px; display: inline-block; background-color: #ffffff;" />
+                    <div style="color: #111111; font-size: 14px; margin-top: 10px; font-weight: bold; text-align: center;">
                       Visitor ID: ${visitorId}
                     </div>
                   </div>
                   ` : ""}
                   
                   <!-- Support & Closing -->
-                  <p style="margin-top: 25px; margin-bottom: 15px; font-size: 13px; color: #666666;">
-                    If you have any questions or need support, feel free to contact us at <a href="mailto:events@taac.org.in" style="color: #d2232a; text-decoration: underline;">events@taac.org.in</a>.
+                  <p style="margin-top: 25px; margin-bottom: 15px; font-size: 13px; color: #333333;">
+                    If you have any queries, feel free to contact us at <a href="mailto:events@taac.org.in" style="color: #2b7cb2; text-decoration: underline;">events@taac.org.in</a>, +91 99944 59099
                   </p>
                   
                   <p style="margin-top: 20px; margin-bottom: 5px; font-size: 13px; color: #666666;">
                     Thank you
                   </p>
                   <p style="margin-top: 0; margin-bottom: 15px; font-size: 14px; font-weight: bold; color: #111111;">
-                    TEAM LTS2026
+                    <strong style="color: #593983;">TEAM LTS2026</strong>
                   </p>
                 </td>
               </tr>
@@ -497,13 +503,13 @@ const buildVisitorEmailHtml = (visitor, isForAdmin, status = "Pending", qrCid = 
                   <![endif]-->
                   <table class="col-stack" align="left" border="0" cellpadding="0" cellspacing="0" width="48%" style="border-collapse: collapse; width: 48%; max-width: 260px; border: 1px solid #eeeeee; border-radius: 8px; background-color: #fafafa;">
                     <tr>
-                      <td align="center" style="padding: 15px; height: 100px; vertical-align: middle;">
-                        <img src="cid:${EMAIL_IMG1_CID}" alt="Team LTS Sponsor" width="130" style="display: block; width: 100%; max-width: 130px; height: auto; border: 0; outline: none;" />
+                      <td align="center" style="padding: 15px 15px 5px 15px; font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; color: #111111;">
+                        Title Sponsor
                       </td>
                     </tr>
                     <tr>
-                      <td align="center" style="padding: 0 15px 15px 15px; font-family: Arial, sans-serif; font-size: 13px; font-weight: bold; color: #333333; text-transform: uppercase; letter-spacing: 0.5px;">
-                        Team LTS
+                      <td align="center" style="padding: 5px 15px 15px 15px; height: 90px; vertical-align: middle;">
+                        <img src="cid:${EMAIL_IMG1_CID}" alt="Title Sponsor" width="130" style="display: block; width: 100%; max-width: 130px; height: auto; border: 0; outline: none;" />
                       </td>
                     </tr>
                   </table>
@@ -514,7 +520,12 @@ const buildVisitorEmailHtml = (visitor, isForAdmin, status = "Pending", qrCid = 
                   <![endif]-->
                   <table class="col-stack" align="right" border="0" cellpadding="0" cellspacing="0" width="48%" style="border-collapse: collapse; width: 48%; max-width: 260px; border: 1px solid #eeeeee; border-radius: 8px; background-color: #fafafa;">
                     <tr>
-                      <td align="center" style="padding: 15px; height: 100px; vertical-align: middle;">
+                      <td align="center" style="padding: 15px 15px 5px 15px; font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; color: #111111;">
+                        Co-Sponsors
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="center" style="padding: 5px 15px 15px 15px; height: 90px; vertical-align: middle;">
                         <table border="0" cellpadding="0" cellspacing="0" width="100%" style="width: 100%;">
                           <tr>
                             <td align="center" width="33%" style="width: 33%; padding: 0 3px; vertical-align: middle;">
@@ -528,11 +539,6 @@ const buildVisitorEmailHtml = (visitor, isForAdmin, status = "Pending", qrCid = 
                             </td>
                           </tr>
                         </table>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td align="center" style="padding: 0 15px 15px 15px; font-family: Arial, sans-serif; font-size: 13px; font-weight: bold; color: #333333; text-transform: uppercase; letter-spacing: 0.5px;">
-                        Co-Sponsors
                       </td>
                     </tr>
                   </table>
@@ -659,20 +665,35 @@ app.get('/api/voucher-link', (req, res) => {
   }
 });
 
+const sponsorUploadDir = path.join(__dirname, "uploads", "sponsors");
+if (!fs.existsSync(sponsorUploadDir)) {
+  fs.mkdirSync(sponsorUploadDir, { recursive: true });
+}
+
+const videoUploadDir = path.join(__dirname, "uploads", "videos");
+if (!fs.existsSync(videoUploadDir)) {
+  fs.mkdirSync(videoUploadDir, { recursive: true });
+}
+
+const mapUploadDir = path.join(__dirname, "uploads", "maps");
+if (!fs.existsSync(mapUploadDir)) {
+  fs.mkdirSync(mapUploadDir, { recursive: true });
+}
+
 const sponsorStorage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, "uploads/sponsors/"),
+  destination: (req, file, cb) => cb(null, sponsorUploadDir),
   filename: (req, file, cb) => cb(null, Date.now() + "-" + file.originalname)
 });
 const sponsorUpload = multer({ storage: sponsorStorage });
 
 const videoStorage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, "uploads/videos/"),
+  destination: (req, file, cb) => cb(null, videoUploadDir),
   filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
 });
 const videoUpload = multer({ storage: videoStorage });
 
 const mapStorage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, "uploads/maps/"),
+  destination: (req, file, cb) => cb(null, mapUploadDir),
   filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
 });
 const mapUpload = multer({ storage: mapStorage });
@@ -933,6 +954,10 @@ app.post("/api/register", async (req, res) => {
           db.query("SELECT setting_value FROM exhibitor_settings WHERE setting_key = 'event_title'", async (errSettings, settingResult) => {
             const currentEventTitle = settingResult[0]?.setting_value || "Our Event";
             try {
+              console.log(`\x1b[36m[📧 EMAIL TRIGGER]\x1b[0m Exhibitor Registration Confirmation`);
+              console.log(`  \x1b[33mFROM:\x1b[0m ${process.env.EMAIL_USER}`);
+              console.log(`  \x1b[33mTO  :\x1b[0m ${email}`);
+              console.log(`  \x1b[33mSUBJ:\x1b[0m Registration Confirmation - ${currentEventTitle}`);
               await transporter.sendMail({
                 from: process.env.EMAIL_USER,
                 to: email,
@@ -1086,6 +1111,11 @@ app.post("/api/register", async (req, res) => {
               `,
                 attachments: withEmailLogo()
               });
+              console.log(`\x1b[32m  ✅ SUCCESS:\x1b[0m Exhibitor registration mail sent to ${email}`);
+              console.log(`\x1b[36m[📧 EMAIL TRIGGER]\x1b[0m Exhibitor Registration - Admin Notification`);
+              console.log(`  \x1b[33mFROM:\x1b[0m ${process.env.EMAIL_USER}`);
+              console.log(`  \x1b[33mTO  :\x1b[0m ${process.env.ADMIN_EMAIL}`);
+              console.log(`  \x1b[33mSUBJ:\x1b[0m New Registration - ${currentEventTitle}`);
               await transporter.sendMail({
                 from: process.env.EMAIL_USER,
                 to: process.env.ADMIN_EMAIL,
@@ -1486,6 +1516,10 @@ app.put("/api/confirm/:id", (req, res) => {
           db.query("SELECT setting_value FROM exhibitor_settings WHERE setting_key = 'event_title'", async (errS, sRes) => {
             const currentEventTitle = sRes[0]?.setting_value || "Our Event";
             try {
+              console.log(`\x1b[36m[📧 EMAIL TRIGGER]\x1b[0m Exhibitor Stall Booking Confirmed`);
+              console.log(`  \x1b[33mFROM:\x1b[0m ${process.env.EMAIL_USER}`);
+              console.log(`  \x1b[33mTO  :\x1b[0m ${user.email}`);
+              console.log(`  \x1b[33mSUBJ:\x1b[0m Stall Booking Confirmed - ${currentEventTitle}`);
               await transporter.sendMail({
                 from: process.env.EMAIL_USER,
                 to: user.email,
@@ -1541,6 +1575,11 @@ app.put("/api/confirm/:id", (req, res) => {
                 `,
                 attachments: withEmailLogo()
               });
+              console.log(`\x1b[32m  ✅ SUCCESS:\x1b[0m Stall confirmation mail sent to ${user.email}`);
+              console.log(`\x1b[36m[📧 EMAIL TRIGGER]\x1b[0m Exhibitor Stall Confirmed - Admin Notification`);
+              console.log(`  \x1b[33mFROM:\x1b[0m ${process.env.EMAIL_USER}`);
+              console.log(`  \x1b[33mTO  :\x1b[0m ${process.env.ADMIN_EMAIL}`);
+              console.log(`  \x1b[33mSUBJ:\x1b[0m EXHIBITOR CONFIRMED: ${user.company} - ${currentEventTitle}`);
               await transporter.sendMail({
                 from: process.env.EMAIL_USER,
                 to: process.env.ADMIN_EMAIL,
@@ -1787,6 +1826,10 @@ app.put("/api/reject/:id", (req, res) => {
       db.query("SELECT setting_value FROM exhibitor_settings WHERE setting_key = 'event_title'", async (errS, sRes) => {
         const currentEventTitle = sRes && sRes[0] ? sRes[0].setting_value : "Luxury Travel Expo";
         try {
+          console.log(`\x1b[36m[📧 EMAIL TRIGGER]\x1b[0m Exhibitor Rejection - User Notification`);
+          console.log(`  \x1b[33mFROM:\x1b[0m ${process.env.EMAIL_USER}`);
+          console.log(`  \x1b[33mTO  :\x1b[0m ${user.email}`);
+          console.log(`  \x1b[33mSUBJ:\x1b[0m Update Regarding Your Registration | ${currentEventTitle}`);
           await transporter.sendMail({
             from: process.env.EMAIL_USER,
             to: user.email,
@@ -1847,6 +1890,11 @@ app.put("/api/reject/:id", (req, res) => {
             `,
             attachments: withEmailLogo()
           });
+          console.log(`\x1b[32m  ✅ SUCCESS:\x1b[0m Rejection mail sent to ${user.email}`);
+          console.log(`\x1b[36m[📧 EMAIL TRIGGER]\x1b[0m Exhibitor Rejection - Admin Notification`);
+          console.log(`  \x1b[33mFROM:\x1b[0m ${process.env.EMAIL_USER}`);
+          console.log(`  \x1b[33mTO  :\x1b[0m ${process.env.ADMIN_EMAIL}`);
+          console.log(`  \x1b[33mSUBJ:\x1b[0m Exhibitor Rejection Logged - ${currentEventTitle}`);
           await transporter.sendMail({
             from: process.env.EMAIL_USER,
             to: process.env.ADMIN_EMAIL,
@@ -1886,9 +1934,10 @@ app.put("/api/reject/:id", (req, res) => {
             `,
             attachments: withEmailLogo()
           });
+          console.log(`\x1b[32m  ✅ SUCCESS:\x1b[0m Rejection admin mail sent to ${process.env.ADMIN_EMAIL}`);
           res.json({ message: "Rejected + Mail Sent" });
         } catch (mailErr) {
-          console.error("Mail Error:", mailErr);
+          console.error(`\x1b[31m  ❌ ERROR:\x1b[0m Exhibitor rejection mail failed:`, mailErr.message);
           res.json({ message: "Rejected but mail failed" });
         }
       });
@@ -2230,13 +2279,25 @@ app.post('/api/visitors/register', visitorUpload.single("file"), async (req, res
             attachments: getEmailAttachments()
           };
           res.status(201).json({ message: "Success", id: result.insertId });
+          console.log(`\x1b[36m[📧 EMAIL TRIGGER]\x1b[0m Visitor Registration Received - User Confirmation`);
+          console.log(`  \x1b[33mFROM:\x1b[0m ${process.env.EMAIL_USER}`);
+          console.log(`  \x1b[33mTO  :\x1b[0m ${email}`);
+          console.log(`  \x1b[33mSUBJ:\x1b[0m LTS 2026 Visitor Registration - Received`);
           transporter.sendMail(visitorMailOptions, (vError) => {
             if (vError) {
-              console.error("Visitor email failed to send in background:", vError);
+              console.error(`\x1b[31m  ❌ ERROR:\x1b[0m Visitor registration mail failed to ${email}:`, vError.message);
+            } else {
+              console.log(`\x1b[32m  ✅ SUCCESS:\x1b[0m Visitor registration mail sent to ${email}`);
             }
+            console.log(`\x1b[36m[📧 EMAIL TRIGGER]\x1b[0m Visitor Registration Received - Admin Notification`);
+            console.log(`  \x1b[33mFROM:\x1b[0m ${process.env.EMAIL_USER}`);
+            console.log(`  \x1b[33mTO  :\x1b[0m ${process.env.ADMIN_EMAIL}`);
+            console.log(`  \x1b[33mSUBJ:\x1b[0m LTS 2026 Visitor Registration - Received`);
             transporter.sendMail(adminMailOptions, (aError) => {
               if (aError) {
-                console.error("Admin email failed to send in background:", aError);
+                console.error(`\x1b[31m  ❌ ERROR:\x1b[0m Visitor admin mail failed to ${process.env.ADMIN_EMAIL}:`, aError.message);
+              } else {
+                console.log(`\x1b[32m  ✅ SUCCESS:\x1b[0m Visitor admin mail sent to ${process.env.ADMIN_EMAIL}`);
               }
             });
           });
@@ -2349,19 +2410,36 @@ app.put('/api/visitors/status/:id', (req, res) => {
 
         if (status !== "waiting list") {
           // Send emails in background safely
+          const displayStatusLabel = status === "approved" ? "Approved ✅" : "Rejected ❌";
+          console.log(`\x1b[36m[📧 EMAIL TRIGGER]\x1b[0m Visitor Status Update (${displayStatusLabel}) - User`);
+          console.log(`  \x1b[33mFROM:\x1b[0m ${process.env.EMAIL_USER}`);
+          console.log(`  \x1b[33mTO  :\x1b[0m ${visitor.email}`);
+          console.log(`  \x1b[33mSUBJ:\x1b[0m ${mailOptions.subject}`);
           try {
             transporter.sendMail(mailOptions, (error) => {
-              if (error) console.error("MAIL ERROR (visitor):", error);
+              if (error) {
+                console.error(`\x1b[31m  ❌ ERROR:\x1b[0m Visitor status mail failed to ${visitor.email}:`, error.message);
+              } else {
+                console.log(`\x1b[32m  ✅ SUCCESS:\x1b[0m Visitor status mail sent to ${visitor.email}`);
+              }
             });
           } catch (mailErr) {
-            console.error("Transporter sendMail (visitor) crashed synchronously:", mailErr);
+            console.error(`\x1b[31m  ❌ CRASH:\x1b[0m Visitor sendMail crashed:`, mailErr.message);
           }
+          console.log(`\x1b[36m[📧 EMAIL TRIGGER]\x1b[0m Visitor Status Update (${displayStatusLabel}) - Admin`);
+          console.log(`  \x1b[33mFROM:\x1b[0m ${process.env.EMAIL_USER}`);
+          console.log(`  \x1b[33mTO  :\x1b[0m ${process.env.ADMIN_EMAIL}`);
+          console.log(`  \x1b[33mSUBJ:\x1b[0m ${adminMailOptions.subject}`);
           try {
             transporter.sendMail(adminMailOptions, (adminError) => {
-              if (adminError) console.error("MAIL ERROR (admin):", adminError);
+              if (adminError) {
+                console.error(`\x1b[31m  ❌ ERROR:\x1b[0m Visitor admin status mail failed to ${process.env.ADMIN_EMAIL}:`, adminError.message);
+              } else {
+                console.log(`\x1b[32m  ✅ SUCCESS:\x1b[0m Visitor admin status mail sent to ${process.env.ADMIN_EMAIL}`);
+              }
             });
           } catch (adminMailErr) {
-            console.error("Transporter sendMail (admin) crashed synchronously:", adminMailErr);
+            console.error(`\x1b[31m  ❌ CRASH:\x1b[0m Admin sendMail crashed:`, adminMailErr.message);
           }
         }
 
