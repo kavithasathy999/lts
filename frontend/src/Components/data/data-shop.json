@@ -1,0 +1,171 @@
+[
+    {
+        "id": 1,
+        "image": "product_1_1.png",
+        "bannerImg": "product_1_1.png",
+        "title": "Beach casual-shoe",
+        "price": "$250.00"
+    },
+    {
+        "id": 2,
+        "image": "product_1_2.png",
+        "bannerImg": "product_1_2.png",
+        "title": "Beach football",
+        "price": "$220.00"
+    },
+    {
+        "id": 3,
+        "image": "product_1_3.png",
+        "bannerImg": "product_1_3.png",
+        "title": "Hamok",
+        "price": "$240.00"
+    },
+    {
+        "id": 4,
+        "image": "product_1_4.png",
+        "bannerImg": "product_1_4.png",
+        "title": "Beach Hat",
+        "price": "$265.00"
+    },
+    {
+        "id": 5,
+        "image": "product_1_5.png",
+        "bannerImg": "product_1_5.png",
+        "title": "Sony Black Headphone",
+        "price": "$235.00"
+    },
+    {
+        "id": 6,
+        "image": "product_1_6.png",
+        "bannerImg": "product_1_6.png",
+        "title": "Hoodie With Zipper",
+        "price": "$225.00"
+    },
+    {
+        "id": 7,
+        "image": "product_1_7.png",
+        "bannerImg": "product_1_7.png",
+        "title": "Trendy Sunglass",
+        "price": "$235.00"
+    },
+    {
+        "id": 8,
+        "image": "product_1_8.png",
+        "bannerImg": "product_1_8.png",
+        "title": "V-Neck T-Shirt",
+        "price": "$250.00"
+    },
+    {
+        "id": 9,
+        "image": "product_1_8.png",
+        "bannerImg": "product_1_8.png",
+        "title": "Beach casual-shoe",
+        "price": "$250.00"
+    },
+    {
+        "id": 10,
+        "image": "product_1_7.png",
+        "bannerImg": "product_1_7.png",
+        "title": "Beach football",
+        "price": "$220.00"
+    },
+    {
+        "id": 11,
+        "image": "product_1_6.png",
+        "bannerImg": "product_1_6.png",
+        "title": "Hamok",
+        "price": "$240.00"
+    },
+    {
+        "id": 12,
+        "image": "product_1_5.png",
+        "bannerImg": "product_1_5.png",
+        "title": "Beach Hat",
+        "price": "$265.00"
+    },
+    {
+        "id": 13,
+        "image": "product_1_4.png",
+        "bannerImg": "product_1_4.png",
+        "title": "Sony Black Headphone",
+        "price": "$235.00"
+    },
+    {
+        "id": 14,
+        "image": "product_1_3.png",
+        "bannerImg": "product_1_3.png",
+        "title": "Hoodie With Zipper",
+        "price": "$225.00"
+    },
+    {
+        "id": 15,
+        "image": "product_1_2.png",
+        "bannerImg": "product_1_2.png",
+        "title": "Trendy Sunglass",
+        "price": "$235.00"
+    },
+    {
+        "id": 16,
+        "image": "product_1_1.png",
+        "bannerImg": "product_1_1.png",
+        "title": "V-Neck T-Shirt",
+        "price": "$250.00"
+    },
+    {
+        "id": 17,
+        "image": "product_1_1.png",
+        "bannerImg": "product_1_1.png",
+        "title": "Beach casual-shoe",
+        "price": "$250.00"
+    },
+    {
+        "id": 18,
+        "image": "product_1_2.png",
+        "bannerImg": "product_1_2.png",
+        "title": "Beach football",
+        "price": "$220.00"
+    },
+    {
+        "id": 19,
+        "image": "product_1_3.png",
+        "bannerImg": "product_1_3.png",
+        "title": "Hamok",
+        "price": "$240.00"
+    },
+    {
+        "id": 20,
+        "image": "product_1_4.png",
+        "bannerImg": "product_1_4.png",
+        "title": "Beach Hat",
+        "price": "$265.00"
+    },
+    {
+        "id": 21,
+        "image": "product_1_5.png",
+        "bannerImg": "product_1_5.png",
+        "title": "Sony Black Headphone",
+        "price": "$235.00"
+    },
+    {
+        "id": 22,
+        "image": "product_1_6.png",
+        "bannerImg": "product_1_6.png",
+        "title": "Hoodie With Zipper",
+        "price": "$225.00"
+    },
+    {
+        "id": 23,
+        "image": "product_1_7.png",
+        "bannerImg": "product_1_7.png",
+        "title": "Trendy Sunglass",
+        "price": "$235.00"
+    },
+    {
+        "id": 24,
+        "image": "product_1_8.png",
+        "bannerImg": "product_1_8.png",
+        "title": "V-Neck T-Shirt",
+        "price": "$250.00"
+    }
+
+]

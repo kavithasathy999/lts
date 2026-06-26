@@ -1,0 +1,14 @@
+# React frontend SPA rewrite rules
+# Redirect all requests to index.html except existing files and directories
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # If file or directory exists, serve it directly
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Otherwise forward to index.html
+  RewriteRule ^ index.html [L]
+</IfModule>

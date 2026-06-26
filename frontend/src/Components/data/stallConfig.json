@@ -1,0 +1,4 @@
+[
+  { "id": "A1", "top": "20%", "left": "30%", "status": "available" },
+  { "id": "A2", "top": "25%", "left": "40%", "status": "booked" }
+]
