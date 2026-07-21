@@ -236,6 +236,8 @@ const buildVisitorEmailHtml = (visitor, isForAdmin, status = "Pending", qrCid = 
   const address1 = vis.address1 || "";
   const address2 = vis.address2 || "";
 
+  const displayVisitorId = visitorId || vis.visitor_id || vis.visitorId || null;
+
   // Dynamic status styling
   const lStatus = status.toLowerCase();
   let statusTextHtml = "";
@@ -469,15 +471,14 @@ const buildVisitorEmailHtml = (visitor, isForAdmin, status = "Pending", qrCid = 
                   </table>
                   ` : ""}
                   
-                  <!-- Visitor Badge / QR Code (If Approved) -->
-                  ${qrCid ? `
+                  <!-- Visitor Badge (QR Code Omitted) -->
+                  ${displayVisitorId ? `
                   <div style="margin: 25px 0; text-align: center;">
                     <h3 style="color: #111111; font-size: 15px; font-weight: bold; margin-top: 0; margin-bottom: 12px; text-align: center;">
                       Visitor Badge
                     </h3>
-                    <img src="cid:${qrCid}" alt="QR Code" width="140" height="140" style="border: 1px solid #dddddd; padding: 5px; display: inline-block; background-color: #ffffff;" />
                     <div style="color: #111111; font-size: 14px; margin-top: 10px; font-weight: bold; text-align: center;">
-                      Visitor ID: ${visitorId}
+                      Visitor ID: ${displayVisitorId}
                     </div>
                   </div>
                   ` : ""}
@@ -569,15 +570,15 @@ const buildVisitorEmailHtml = (visitor, isForAdmin, status = "Pending", qrCid = 
   `;
 };
 
-const buildExhibitorEmailHtml = (exhibitor, isForAdmin, status = "Pending") => {
+const buildExhibitorEmailHtml = (exhibitor, isForAdmin, status = "Pending", notes = null) => {
   const ex = exhibitor || {};
   const name = ex.name || "Exhibitor";
   const company = ex.company || "";
   const email = ex.email || "";
   const mobile = ex.mobile || "";
   const numberOfExhibitors = ex.numberOfExhibitors || "";
-  const zoneName = ex.zoneName || ex.zone || "";
-  const stallNo = ex.stallNo || ex.stall || "";
+  const zoneName = ex.zone_name || ex.zoneName || ex.zone || "";
+  const stallNo = ex.stall_no || ex.stallNo || ex.stall || "";
   
   const addressParts = [];
   if (ex.address1) addressParts.push(ex.address1);
@@ -602,11 +603,27 @@ const buildExhibitorEmailHtml = (exhibitor, isForAdmin, status = "Pending") => {
   let bodyParagraph = "";
 
   if (isForAdmin) {
-    congratTitle = "Congratulations! You've Received a New Exhibitor Registration!";
-    bodyParagraph = `We have received a registration submission from <strong>${company}</strong> for <strong style="color: #593983;">LTS 2026</strong>. The registration is currently under review by the organizing team. Further communication and confirmation will be sent directly to the registered email address upon completion of the evaluation process.`;
+    if (lStatus === "approved" || lStatus === "approval" || lStatus === "confirmed") {
+      congratTitle = "Visitor Registration - Approved";
+      bodyParagraph = `We are pleased to inform you that the registration submission for <strong style="color: #593983;">${name}</strong> from <strong>${company}</strong> has been approved.`;
+    } else if (lStatus === "rejected" || lStatus === "rejection") {
+      congratTitle = "Visitor Registration - Rejected";
+      bodyParagraph = `Please note that the registration submission for <strong style="color: #593983;">${name}</strong> from <strong>${company}</strong> has been rejected.`;
+    } else {
+      congratTitle = "Congratulations! You've Received a New Exhibitor Registration!";
+      bodyParagraph = `We have received a registration submission from <strong>${company}</strong> for <strong style="color: #593983;">LTS 2026</strong>. The registration is currently under review by the organizing team. Further communication and confirmation will be sent directly to the registered email address upon completion of the evaluation process.`;
+    }
   } else {
-    congratTitle = "Congratulations! Your Registration has been Received!";
-    bodyParagraph = `We have received your registration submission for <strong style="color: #593983;">LTS 2026</strong>. The registration is currently under review by the organizing team. Further communication and confirmation will be sent directly your registered email.`;
+    if (lStatus === "approved" || lStatus === "approval" || lStatus === "confirmed") {
+      congratTitle = "Congratulations! Your Registration has been Approved!";
+      bodyParagraph = `We are pleased to inform you that your registration submission for <strong style="color: #593983;">LTS 2026</strong> has been successfully reviewed and approved by the organizing team. Your participation has been confirmed, and we look forward to welcoming you to the LTS event on 01st August 2026.`;
+    } else if (lStatus === "rejected" || lStatus === "rejection") {
+      congratTitle = "Registration Status Update";
+      bodyParagraph = `Thank you for your interest in participating in <strong style="color: #593983;">LTS 2026</strong>. After careful review by the organizing team, we regret to inform you that your registration submission has not been approved at this time. We appreciate the effort taken to submit your application and thank you for your interest in the event. For any further clarification, please feel free to contact the organizing team through the official communication channels.`;
+    } else {
+      congratTitle = "Congratulations! Your Registration has been Received!";
+      bodyParagraph = `We have received your registration submission for <strong style="color: #593983;">LTS 2026</strong>. The registration is currently under review by the organizing team. Further communication and confirmation will be sent directly your registered email.`;
+    }
   }
 
   return `
@@ -793,6 +810,19 @@ const buildExhibitorEmailHtml = (exhibitor, isForAdmin, status = "Pending") => {
                         ${fullAddress}
                       </td>
                     </tr>
+                    ${notes ? `
+                    <tr>
+                      <td valign="top" width="15" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0; width: 15px;">
+                        &bull;
+                      </td>
+                      <td valign="top" width="160" style="font-family: Arial, sans-serif; font-size: 14px; color: #111111; font-weight: bold; line-height: 1.6; padding: 4px 0; width: 160px;">
+                        Comments:
+                      </td>
+                      <td valign="top" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0;">
+                        ${notes}
+                      </td>
+                    </tr>
+                    ` : ""}
                     ` : ""}
                   </table>
                   
@@ -968,9 +998,15 @@ app.post("/api/login", (req, res) => {
   }
 });
 
+const getReqProtocol = (req) => {
+  const referer = req.get('referer') || '';
+  if (referer.startsWith('https://')) return 'https';
+  return req.get('x-forwarded-proto') || (req.secure ? 'https' : req.protocol);
+};
+
 app.post('/api/upload-voucher', uploadVoucher.single('voucher'), (req, res) => {
   if (!req.file) return res.status(400).json({ message: 'No file uploaded.' });
-  const protocol = req.protocol;
+  const protocol = getReqProtocol(req);
   const host = req.get('host');
   const fileUrl = `${protocol}://${host}/uploads/brochure/Golden-Travels.pdf`;
   res.status(200).json({ url: fileUrl });
@@ -979,7 +1015,7 @@ app.post('/api/upload-voucher', uploadVoucher.single('voucher'), (req, res) => {
 app.get('/api/voucher-link', (req, res) => {
   const filePath = path.join(__dirname, "uploads", "brochure", "Golden-Travels.pdf");
   if (fs.existsSync(filePath)) {
-    const protocol = req.protocol;
+    const protocol = getReqProtocol(req);
     const host = req.get('host');
     res.json({ url: `${protocol}://${host}/uploads/brochure/Golden-Travels.pdf` });
   } else {
@@ -1025,7 +1061,7 @@ app.get("/api/banner", (req, res) => {
     if (err) return res.status(500).json(err);
     db.query("SELECT * FROM event_info WHERE id=1", (err2, eventResult) => {
       if (err2) return res.status(500).json(err2);
-      const protocol = req.protocol;
+      const protocol = getReqProtocol(req);
       const host = req.get('host');
       const formattedSlides = slidesResult.map(slide => {
         let imageUrl = slide.image;
@@ -1093,7 +1129,7 @@ app.get("/api/video", (req, res) => {
   db.query("SELECT * FROM aboutpage_video LIMIT 1", (err, result) => {
     if (err) return res.status(500).json(err);
     if (result.length === 0) return res.json({ videoUrl: "" });
-    const protocol = req.protocol;
+    const protocol = getReqProtocol(req);
     const host = req.get('host');
     let videoUrl = result[0].video_url;
     if (videoUrl.startsWith("undefined/")) {
@@ -1116,7 +1152,7 @@ app.post("/api/video", videoUpload.single("video"), (req, res) => {
       [filePath],
       (err) => {
         if (err) return res.status(500).json(err);
-        const protocol = req.protocol;
+        const protocol = getReqProtocol(req);
         const host = req.get('host');
         res.json({
           videoUrl: `${protocol}://${host}/${filePath}`
@@ -1143,7 +1179,7 @@ app.get("/api/map", (req, res) => {
   db.query("SELECT * FROM registerform_map LIMIT 1", (err, result) => {
     if (err) return res.status(500).json(err);
     if (result.length === 0) return res.json({ mapImageUrl: "" });
-    const protocol = req.protocol;
+    const protocol = getReqProtocol(req);
     const host = req.get('host');
     let mapUrl = result[0].map_url;
     if (mapUrl.startsWith("undefined/")) {
@@ -1166,7 +1202,7 @@ app.post("/api/map", mapUpload.single("map"), (req, res) => {
     }
     db.query("INSERT INTO registerform_map (map_url) VALUES (?)", [filePath], (err) => {
       if (err) return res.status(500).json(err);
-      const protocol = req.protocol;
+      const protocol = getReqProtocol(req);
       const host = req.get('host');
       res.json({ mapImageUrl: `${protocol}://${host}/${filePath}` });
     });
@@ -1193,7 +1229,7 @@ app.get("/api/sponsors/:type", (req, res) => {
     [type],
     (err, result) => {
       if (err) return res.status(500).json(err);
-      const protocol = req.protocol;
+      const protocol = getReqProtocol(req);
       const host = req.get('host');
       res.json({
         sponsors: result.map(row => {
@@ -1347,7 +1383,7 @@ app.post("/api/register", async (req, res) => {
               await transporter.sendMail({
                 from: process.env.EMAIL_USER,
                 to: email,
-                subject: `Registration Confirmation - ${currentEventTitle}`,
+                subject: `LTS 2026 Exhibitor Registration - Recieved`,
                 html: userHtml,
                 attachments: attachments
               });
@@ -1360,7 +1396,7 @@ app.post("/api/register", async (req, res) => {
               await transporter.sendMail({
                 from: process.env.EMAIL_USER,
                 to: process.env.ADMIN_EMAIL,
-                subject: `New Registration - ${currentEventTitle}`,
+                subject: `LTS 2026 Exhibitor Registration - Recieved`,
                 html: adminHtml,
                 attachments: attachments
               });
@@ -1607,128 +1643,58 @@ app.put("/api/confirm/:id", (req, res) => {
         `;
         db.query(freshDataSql, [id], (err3, finalResult) => {
           const user = finalResult[0];
-          if (err3 || !user || !user.email) {
-            console.error("Data fetch error or missing email:", err3);
-            return res.status(500).json({ error: "Could not retrieve user details for email" });
+          if (err3 || !user) {
+            console.error("Data fetch error:", err3);
+            return res.status(500).json({ error: "Could not retrieve user details" });
           }
+          const userEmail = user.email || "";
           db.query("SELECT setting_value FROM exhibitor_settings WHERE setting_key = 'event_title'", async (errS, sRes) => {
             const currentEventTitle = sRes[0]?.setting_value || "Our Event";
             try {
-              console.log(`\x1b[36m[📧 EMAIL TRIGGER]\x1b[0m Exhibitor Stall Booking Confirmed`);
+              const userEmailHtml = buildExhibitorEmailHtml(user, false, "Confirmed");
+              const adminEmailHtml = buildExhibitorEmailHtml(user, true, "Confirmed");
+              const adminTargetEmail = process.env.ADMIN_EMAIL || "events@taac.org.in";
+
+              if (userEmail) {
+                console.log(`\x1b[36m[📧 EMAIL TRIGGER]\x1b[0m Exhibitor Registration Confirmed - User`);
+                console.log(`  \x1b[33mFROM:\x1b[0m ${process.env.EMAIL_USER}`);
+                console.log(`  \x1b[33mTO  :\x1b[0m ${userEmail}`);
+                console.log(`  \x1b[33mSUBJ:\x1b[0m Congratulations! Your Registration has been Approved!`);
+                transporter.sendMail({
+                  from: process.env.EMAIL_USER,
+                  to: userEmail,
+                  subject: `Congratulations! Your Registration has been Approved!`,
+                  html: userEmailHtml,
+                  attachments: getEmailAttachments()
+                }, (errUser) => {
+                  if (errUser) {
+                    console.error(`\x1b[31m  ❌ ERROR:\x1b[0m User confirmation mail failed to ${userEmail}:`, errUser.message);
+                  } else {
+                    console.log(`\x1b[32m  ✅ SUCCESS:\x1b[0m Confirmation mail sent to ${userEmail}`);
+                  }
+                });
+              } else {
+                console.warn(`⚠️ User email is empty for registration ID ${id}`);
+              }
+
+              console.log(`\x1b[36m[📧 EMAIL TRIGGER]\x1b[0m Exhibitor Registration Confirmed - Admin`);
               console.log(`  \x1b[33mFROM:\x1b[0m ${process.env.EMAIL_USER}`);
-              console.log(`  \x1b[33mTO  :\x1b[0m ${user.email}`);
-              console.log(`  \x1b[33mSUBJ:\x1b[0m Stall Booking Confirmed - ${currentEventTitle}`);
-              await transporter.sendMail({
+              console.log(`  \x1b[33mTO  :\x1b[0m ${adminTargetEmail}`);
+              console.log(`  \x1b[33mSUBJ:\x1b[0m Exhibitor Registration - Approved`);
+              transporter.sendMail({
                 from: process.env.EMAIL_USER,
-                to: user.email,
-                subject: `Stall Booking Confirmed - ${currentEventTitle}`,
-                html: `
-                  <div style="font-family: 'Montserrat', sans-serif; background-color: #f4f4f4; padding: 20px;">
-                    <div style="max-width: 600px; margin: auto; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-                      <div style="background: #512e8e; color: #fff; padding: 20px; text-align: center;">
-                        ${emailLogoHtml(currentEventTitle, "margin: 0; text-transform: uppercase; color: #ffffff; font-size: 22px; font-weight: bold; line-height: 1.2;")}
-                      </div>
-                      <div style="padding: 30px; text-align: center;">
-                        <p style="font-size: 18px;">Congratulations <strong>${user.name}</strong>,</p>
-                        <p>Your stall registration has been officially confirmed.</p>
-                          <table width="100%" style="border-collapse: collapse; margin-top: 20px; text-align: left; border: 1px solid #ddd; border-radius: 4px;">
-                            <tr style="background: #f8f9fa;">
-                              <td style="padding: 10px 12px; border-bottom: 1px solid #eee; font-weight: bold; font-size: 13px; color: #000000; text-transform: uppercase;">Exhibitor Company Name:</td>
-                            </tr>
-                            <tr>
-                              <td style="padding: 12px; font-size: 16px; color: #333;">${user.company}</td>
-                            </tr>
-                          </table>
-                          <table width="100%" style="border-collapse: collapse; margin-top: 15px; text-align: left; border: 1px solid #ddd; border-radius: 4px;">
-                            <tr style="background: #f8f9fa;">
-                              <td style="padding: 10px 12px; border-bottom: 1px solid #eee; font-weight: bold; font-size: 13px; color: #000000; text-transform: uppercase;">Contact Person Name:</td>
-                            </tr>
-                            <tr>
-                              <td style="padding: 12px; font-size: 16px; color: #333;">${user.name}</td>
-                            </tr>
-                          </table>
-                          <table width="100%" style="border-collapse: collapse; margin-top: 15px; text-align: left; border: 1px solid #ddd; border-radius: 4px;">
-                            <tr style="background: #f8f9fa;">
-                              <td style="padding: 10px 12px; border-bottom: 1px solid #eee; font-weight: bold; font-size: 13px; color: #000000; text-transform: uppercase;">Zone:</td>
-                            </tr>
-                            <tr>
-                              <td style="padding: 12px; font-size: 16px; color: #333;">${user.zone_name || 'Assigned'}</td>
-                            </tr>
-                          </table>
-                          <table width="100%" style="border-collapse: collapse; margin-top: 15px; text-align: left; border: 1px solid #ddd; border-radius: 4px;">
-                            <tr style="background: #f8f9fa;">
-                              <td style="padding: 10px 12px; border-bottom: 1px solid #eee; font-weight: bold; font-size: 13px; color: #000000; text-transform: uppercase;">Stall Number:</td>
-                            </tr>
-                            <tr>
-                              <td style="padding: 12px; font-size: 16px; color: #333;">${user.stall_no || 'Assigned'}</td>
-                            </tr>
-                          </table>
-                        <p style="color: #666; font-size: 13px; margin-top: 20px;">
-                          We looking forward to see you at event! <br/>
-                          <span style="font-size: 10px; color: #eee;">&copy; ${new Date().getFullYear()} ${currentEventTitle}</span>
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                `,
-                attachments: withEmailLogo()
+                to: adminTargetEmail,
+                subject: `Exhibitor Registration - Approved`,
+                html: adminEmailHtml,
+                attachments: getEmailAttachments()
+              }, (errAdmin) => {
+                if (errAdmin) {
+                  console.error(`\x1b[31m  ❌ ERROR:\x1b[0m Admin confirmation mail failed to ${adminTargetEmail}:`, errAdmin.message);
+                } else {
+                  console.log(`\x1b[32m  ✅ SUCCESS:\x1b[0m Admin confirmation notification sent`);
+                }
               });
-              console.log(`\x1b[32m  ✅ SUCCESS:\x1b[0m Stall confirmation mail sent to ${user.email}`);
-              console.log(`\x1b[36m[📧 EMAIL TRIGGER]\x1b[0m Exhibitor Stall Confirmed - Admin Notification`);
-              console.log(`  \x1b[33mFROM:\x1b[0m ${process.env.EMAIL_USER}`);
-              console.log(`  \x1b[33mTO  :\x1b[0m ${process.env.ADMIN_EMAIL}`);
-              console.log(`  \x1b[33mSUBJ:\x1b[0m EXHIBITOR CONFIRMED: ${user.company} - ${currentEventTitle}`);
-              await transporter.sendMail({
-                from: process.env.EMAIL_USER,
-                to: process.env.ADMIN_EMAIL,
-                subject: `EXHIBITOR CONFIRMED: ${user.company} - ${currentEventTitle}`,
-                html: `
-                  <div style="font-family: 'Montserrat', sans-serif; background-color: #f4f4f4; padding: 20px;">
-                    <div style="max-width: 600px; margin: auto; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-                      <div style="background: #512e8e; color: #fff; padding: 20px; text-align: center;">
-                        ${emailLogoHtml(currentEventTitle, "margin: 0; text-transform: uppercase; color: #ffffff; font-size: 22px; font-weight: bold; line-height: 1.2;")}
-                      </div>
-                      <div style="padding: 30px; text-align: center;">
-                        <p style="font-size: 18px;">Admin Notification</p>
-                        <p>The registration for <strong>${user.company}</strong> has been confirmed by the system.</p>
-                          <table width="100%" style="border-collapse: collapse; margin-top: 20px; text-align: left; border: 1px solid #ddd; border-radius: 4px;">
-                            <tr style="background: #f8f9fa;">
-                              <td style="padding: 10px 12px; border-bottom: 1px solid #eee; font-weight: bold; font-size: 13px; color: #000000; text-transform: uppercase;">Exhibitor Company Name:</td>
-                            </tr>
-                            <tr>
-                              <td style="padding: 12px; font-size: 16px; color: #333;">${user.company}</td>
-                            </tr>
-                          </table>
-                          <table width="100%" style="border-collapse: collapse; margin-top: 15px; text-align: left; border: 1px solid #ddd; border-radius: 4px;">
-                            <tr style="background: #f8f9fa;">
-                              <td style="padding: 10px 12px; border-bottom: 1px solid #eee; font-weight: bold; font-size: 13px; color: #000000; text-transform: uppercase;">Contact Person Name:</td>
-                            </tr>
-                            <tr>
-                              <td style="padding: 12px; font-size: 16px; color: #333;">${user.name}</td>
-                            </tr>
-                          </table>
-                          <table width="100%" style="border-collapse: collapse; margin-top: 15px; text-align: left; border: 1px solid #ddd; border-radius: 4px;">
-                            <tr style="background: #f8f9fa;">
-                              <td style="padding: 10px 12px; border-bottom: 1px solid #eee; font-weight: bold; font-size: 13px; color: #000000; text-transform: uppercase;">Zone:</td>
-                            </tr>
-                            <tr>
-                              <td style="padding: 12px; font-size: 16px; color: #333;">${user.zone_name || 'Assigned'}</td>
-                            </tr>
-                          </table>
-                          <table width="100%" style="border-collapse: collapse; margin-top: 15px; text-align: left; border: 1px solid #ddd; border-radius: 4px;">
-                            <tr style="background: #f8f9fa;">
-                              <td style="padding: 10px 12px; border-bottom: 1px solid #eee; font-weight: bold; font-size: 13px; color: #000000; text-transform: uppercase;">Stall Number:</td>
-                            </tr>
-                            <tr>
-                              <td style="padding: 12px; font-size: 16px; color: #333;">${user.stall_no || 'Assigned'}</td>
-                            </tr>
-                          </table>
-                      </div>
-                    </div>
-                  </div>
-                `,
-                attachments: withEmailLogo()
-              });
+
               db.query("SELECT * FROM exhibitors WHERE registration_id = ?", [id], (err4, exhibitorsData) => {
                 if (err4) {
                   console.error("Exhibitor fetch error:", err4);
@@ -1740,8 +1706,7 @@ app.put("/api/confirm/:id", (req, res) => {
                   message: "Confirmed + Data Saved",
                   data: user
                 });
-              }
-              );
+              });
             } catch (mailErr) {
               console.error("Mail Error:", mailErr);
               db.query("SELECT * FROM exhibitors WHERE registration_id = ?", [id], (err4, exhibitorsData) => {
@@ -1924,115 +1889,49 @@ app.put("/api/reject/:id", (req, res) => {
       db.query("SELECT setting_value FROM exhibitor_settings WHERE setting_key = 'event_title'", async (errS, sRes) => {
         const currentEventTitle = sRes && sRes[0] ? sRes[0].setting_value : "Luxury Travel Expo";
         try {
-          console.log(`\x1b[36m[📧 EMAIL TRIGGER]\x1b[0m Exhibitor Rejection - User Notification`);
-          console.log(`  \x1b[33mFROM:\x1b[0m ${process.env.EMAIL_USER}`);
-          console.log(`  \x1b[33mTO  :\x1b[0m ${user.email}`);
-          console.log(`  \x1b[33mSUBJ:\x1b[0m Update Regarding Your Registration | ${currentEventTitle}`);
-          await transporter.sendMail({
-            from: process.env.EMAIL_USER,
-            to: user.email,
-            subject: `Update Regarding Your Registration | ${currentEventTitle}`,
-            html: `
-              <div style="background-color: #f8f9fa; padding: 50px 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333;">
-                <table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.08);">           
-                  <tr>
-                    <td align="center" style="background-color: #6a0dad; padding: 40px 20px;">
-                     ${emailLogoHtml(currentEventTitle, "color: #ffffff; margin: 0; font-size: 22px; letter-spacing: 2px; text-transform: uppercase; font-weight: 300; line-height: 1.2;")}
-                      <div style="width: 50px; height: 2px; background-color: #ffffff; margin-top: 15px; opacity: 0.5;"></div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td style="padding: 50px 40px;">
-                      <p style="font-size: 16px; line-height: 1.6; color: #1a1a1a;">Dear <strong>${user.name}</strong>,</p>                  
-                      <p style="font-size: 16px; line-height: 1.8; color: #555;">
-                        Thank you for applying to be a part of the <strong>${currentEventTitle}</strong>. Our team has carefully reviewed your registration and company.
-                      </p>               
-                      <p style="font-size: 16px; line-height: 1.8; color: #555;">
-                        Due to the exclusive nature of this year's event and limited floor capacity, we are unable to approve your registration at this time.
-                      </p>                
-                      <p style="margin: 0 0 8px 0; font-size: 20px; color: #6a0dad; text-transform: uppercase; font-weight: 800; letter-spacing: 2px; display: block;">
-                        Status Note:
-                      </p>
-                      <table width="100%" style="margin-top: 20px; text-align: left;">
-                        <tr style="background: #f8f9fa;">
-                          <td style="font-weight: bold; font-size: 13px; color: #000000; text-transform: uppercase;">
-                            Zone:  ${user.zone_name || 'N/A'}
-                          </td>
-                        </tr>
-                      </table>
-                      <table width="100%" style="margin-top: 15px; text-align: left;">
-                        <tr style="background: #f8f9fa;">
-                          <td style="font-weight: bold; font-size: 13px; color: #000000; text-transform: uppercase;">
-                            Stall Number: ${user.stall_no || 'N/A'}
-                          </td>
-                        </tr> 
-                      </table> 
-                      <p style="margin-top: 5px; font-size: 18px; line-height: 1.5; color: #222; font-weight: 400;">
-                        "${reason || 'Current exhibition criteria not met for this cycle.'}"
-                      </p>
-                      <p style="font-size: 15px; line-height: 1.6; color: #777;">
-                        Your information will remain in our database and we will reach out when suitable opening arise in future.
-                      </p>
-                      <p style="font-size: 16px; line-height: 1.6; color: #1a1a1a; margin-top: 40px;">
-                        Sincerely,<br>
-                        <span style="color: #222; font-weight: bold;">The Exhibition Director</span><br>
-                        ${currentEventTitle}
-                      </p>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td style="background: #f4f4f4; padding: 20px; text-align: center; font-size: 12px; color: #999;"> &copy; ${new Date().getFullYear()} ${currentEventTitle}</td>
-                  </tr>
-                </table>
-              </div>
-            `,
-            attachments: withEmailLogo()
-          });
-          console.log(`\x1b[32m  ✅ SUCCESS:\x1b[0m Rejection mail sent to ${user.email}`);
+          const userEmailHtml = buildExhibitorEmailHtml(user, false, "Rejected", reason);
+          const adminEmailHtml = buildExhibitorEmailHtml(user, true, "Rejected", reason);
+          const userEmail = user.email || "";
+          const adminTargetEmail = process.env.ADMIN_EMAIL || "events@taac.org.in";
+
+          if (userEmail) {
+            console.log(`\x1b[36m[📧 EMAIL TRIGGER]\x1b[0m Exhibitor Rejection - User Notification`);
+            console.log(`  \x1b[33mFROM:\x1b[0m ${process.env.EMAIL_USER}`);
+            console.log(`  \x1b[33mTO  :\x1b[0m ${userEmail}`);
+            console.log(`  \x1b[33mSUBJ:\x1b[0m Registration Status Update`);
+            transporter.sendMail({
+              from: process.env.EMAIL_USER,
+              to: userEmail,
+              subject: `Registration Status Update`,
+              html: userEmailHtml,
+              attachments: getEmailAttachments()
+            }, (errUser) => {
+              if (errUser) {
+                console.error(`\x1b[31m  ❌ ERROR:\x1b[0m Rejection user mail failed to ${userEmail}:`, errUser.message);
+              } else {
+                console.log(`\x1b[32m  ✅ SUCCESS:\x1b[0m Rejection mail sent to ${userEmail}`);
+              }
+            });
+          }
+
           console.log(`\x1b[36m[📧 EMAIL TRIGGER]\x1b[0m Exhibitor Rejection - Admin Notification`);
           console.log(`  \x1b[33mFROM:\x1b[0m ${process.env.EMAIL_USER}`);
-          console.log(`  \x1b[33mTO  :\x1b[0m ${process.env.ADMIN_EMAIL}`);
-          console.log(`  \x1b[33mSUBJ:\x1b[0m Exhibitor Rejection Logged - ${currentEventTitle}`);
-          await transporter.sendMail({
+          console.log(`  \x1b[33mTO  :\x1b[0m ${adminTargetEmail}`);
+          console.log(`  \x1b[33mSUBJ:\x1b[0m Visitor Registration - Rejected`);
+          transporter.sendMail({
             from: process.env.EMAIL_USER,
-            to: process.env.ADMIN_EMAIL,
-            subject: `Exhibitor Rejection Logged - ${currentEventTitle}`,
-            html: `
-              <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; border: 1px solid #ddd; border-radius: 8px; overflow: hidden;">
-                <div style="background-color: #f8f9fa; padding: 20px; border-bottom: 2px solid #d4af37;">
-                  ${emailLogoHtml("Rejection Confirmation", "margin: 0; color: #333; text-align: left; font-size: 18px; font-weight: bold; line-height: 1.2;")}
-                  <p style="margin: 5px 0 0; font-size: 14px; color: #666; text-align: center;"><strong>${currentEventTitle}</strong></p>
-                </div>
-                <div style="padding: 20px;">
-                  <p>The following exhibitor registration has been rejected:</p>
-                  <table width="100%" style="border-collapse: collapse; margin-top: 15px; border: 1px solid #ddd;">
-                    <tr>
-                      <td style="padding: 12px; border-bottom: 1px solid #ddd; border-right: 1px solid #ddd; background-color: #f9f9f9; font-weight: bold; width: 35%;">Name</td>
-                      <td style="padding: 12px; border-bottom: 1px solid #ddd;">${user.name}</td>
-                    </tr>
-                    <tr>
-                      <td style="padding: 12px; border-bottom: 1px solid #ddd; border-right: 1px solid #ddd; background-color: #f9f9f9; font-weight: bold;">Company</td>
-                      <td style="padding: 12px; border-bottom: 1px solid #ddd;">${user.company}</td>
-                    </tr>
-                    <tr>
-                      <td style="padding: 12px; border-bottom: 1px solid #ddd; border-right: 1px solid #ddd; background-color: #f9f9f9; font-weight: bold;">Zone</td>
-                      <td style="padding: 12px; border-bottom: 1px solid #ddd;">${user.zone_name}</td>
-                    </tr>
-                    <tr>
-                      <td style="padding: 12px; border-bottom: 1px solid #ddd; border-right: 1px solid #ddd; background-color: #f9f9f9; font-weight: bold;">Stall</td>
-                      <td style="padding: 12px; border-bottom: 1px solid #ddd;">${user.stall_no}</td>
-                    </tr>
-                    <tr>
-                      <td style="padding: 12px; border-right: 1px solid #ddd; background-color: #f9f9f9; font-weight: bold;">Reason</td>
-                      <td style="padding: 12px; color: #d9534f; font-weight: bold;">${reason}</td>
-                    </tr>
-                  </table>
-                </div>
-              </div>
-            `,
-            attachments: withEmailLogo()
+            to: adminTargetEmail,
+            subject: `Visitor Registration - Rejected`,
+            html: adminEmailHtml,
+            attachments: getEmailAttachments()
+          }, (errAdmin) => {
+            if (errAdmin) {
+              console.error(`\x1b[31m  ❌ ERROR:\x1b[0m Rejection admin mail failed to ${adminTargetEmail}:`, errAdmin.message);
+            } else {
+              console.log(`\x1b[32m  ✅ SUCCESS:\x1b[0m Rejection admin mail sent to ${adminTargetEmail}`);
+            }
           });
-          console.log(`\x1b[32m  ✅ SUCCESS:\x1b[0m Rejection admin mail sent to ${process.env.ADMIN_EMAIL}`);
+
           res.json({ message: "Rejected + Mail Sent" });
         } catch (mailErr) {
           console.error(`\x1b[31m  ❌ ERROR:\x1b[0m Exhibitor rejection mail failed:`, mailErr.message);
