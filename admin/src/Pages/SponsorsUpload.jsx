@@ -48,10 +48,7 @@ function SponsorUpload() {
     const previews = selected.map((file) => URL.createObjectURL(file));
     setFiles(selected);
     setPreview(previews);
-<<<<<<< HEAD
     e.target.value = "";
-=======
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
   };
 
   const handleUpload = async () => {
@@ -65,10 +62,7 @@ function SponsorUpload() {
       toast.update(toastId, { render: "Uploaded successfully!", type: "success", isLoading: false, autoClose: 1500 });
       setFiles([]);
       setPreview([]);
-<<<<<<< HEAD
       setCurrentPage(1);
-=======
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
       fetchSponsors();
     } catch (err) {
       toast.update(toastId, { render: "Upload failed", type: "error", isLoading: false, autoClose: 1500 });

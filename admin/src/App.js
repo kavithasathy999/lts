@@ -26,6 +26,8 @@ import VisitedPersonDetails from "./Pages/VisitedPersonDetails";
 import StallPricing from "./Pages/StallPricing";
 import VoucherAdmin from "./Pages/VoucherAdmin";
 
+import ProtectedRoute from "./Components/ProtectedRoute";
+
 function App() {
   return (
     <Router>
@@ -38,7 +40,8 @@ function App() {
         <Route path="/admin-register" element={<AdminRegister />} />
 
         {/* Admin Layout + Nested Pages */}
-        <Route path="/admin" element={<AdminLayout />}>
+        <Route element={<ProtectedRoute />}>
+          <Route path="/admin" element={<AdminLayout />}>
 
           {/* Dashboard */}
           <Route index element={<AdminDashboard />} />
@@ -62,6 +65,7 @@ function App() {
           <Route path="/admin/visitor/:id" element={<VisitedPersonDetails />} />
           <Route path="/admin/stall-pricing" element={<StallPricing />} />
           <Route path="/admin/upload-voucher" element={<VoucherAdmin />} />
+        </Route>
         </Route>
 
       </Routes>

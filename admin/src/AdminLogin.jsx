@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "./config/api";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom"; 
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import './App.css';
@@ -12,6 +12,12 @@ function AdminLogin() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (localStorage.getItem("admin")) {
+      navigate("/admin");
+    }
+  }, [navigate]);
 
   const handleChange = (e) => {
     setFormData({

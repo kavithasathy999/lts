@@ -5,10 +5,7 @@ import Modal from '../Gallery/Modal';
 function FooterThree() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalImage, setModalImage] = useState('');
-<<<<<<< HEAD
 
-=======
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
     const openModal = (imageSrc, event) => {
         event.preventDefault(); 
         setModalImage(imageSrc);
@@ -60,10 +57,10 @@ function FooterThree() {
                                     <ul className="menu">                                      
                                         <li>
                                             <a
-                                            href="/"
+                                            href="/registrationForm"
                                             onClick={(e) => {
                                                 e.preventDefault();
-                                                navigate("/");
+                                                navigate("/registrationForm");
                                             }}
                                             >
                                             Exhibitor Registration
@@ -82,16 +79,9 @@ function FooterThree() {
                                         </li>                                 
                                         <li>
                                             <a
-<<<<<<< HEAD
                                             href="#"
                                             onClick={(e) => {
                                                 e.preventDefault();
-=======
-                                            href="/registrationForm"
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                navigate("/registrationForm");
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
                                             }}
                                             >
                                             Stall Map

@@ -32,26 +32,18 @@ function VisitorList() {
     };
 
     const filteredVisitors = visitors.filter((v) => {
-<<<<<<< HEAD
         const keyword = search.trim().toLowerCase();
         const nameCompanyMatch = (
-=======
-        const keyword = search.toLowerCase();
-        return (
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
             (v.first_name || "").toLowerCase().includes(keyword) ||
             (v.company_name || "").toLowerCase().includes(keyword) ||
             (v.email || "").toLowerCase().includes(keyword) ||
             (v.mobile_number || "").toLowerCase().includes(keyword)
         );
-<<<<<<< HEAD
         const idStr = v.visitor_id ? String(v.visitor_id) : "";
         const isApproved = v.status === "approved";
         const idMatch = isApproved && idStr.toLowerCase().includes(keyword);
 
         return nameCompanyMatch || idMatch;
-=======
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
     });
 
     const totalPages = Math.ceil(filteredVisitors.length / itemsPerPage);
@@ -116,11 +108,7 @@ function VisitorList() {
             <input
               type="text"
               className="form-control"
-<<<<<<< HEAD
               placeholder="Search by name, company, email, mobile, visitor ID..."
-=======
-              placeholder="Search by name, company, email, mobile..."
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               style={{ height: "65px", fontSize: "16px", paddingRight: "45px" }}
@@ -148,10 +136,7 @@ function VisitorList() {
           <thead>
             <tr>
               <th>S.No</th>
-<<<<<<< HEAD
               <th>Visitor Id</th>
-=======
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
               <th>Person Name</th>
               <th>Company Name</th>
               <th>Email Address</th>
@@ -164,10 +149,7 @@ function VisitorList() {
                 paginatedVisitors.map((v, index) => (
                 <tr key={v.id}>
                     <td>{indexOfFirstItem + index + 1}</td>
-<<<<<<< HEAD
                     <td>{v.status === "approved" ? v.visitor_id : "-"}</td>
-=======
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
                     <td>{v.first_name}</td>
                     <td>{v.company_name}</td>
                     <td>{v.email}</td>
@@ -194,11 +176,7 @@ function VisitorList() {
                 ))
             ) : (
                 <tr>
-<<<<<<< HEAD
                 <td colSpan="7" style={{ textAlign: "center", padding: "20px" }}>
-=======
-                <td colSpan="5" style={{ textAlign: "center", padding: "20px" }}>
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
                     No matching visitors found
                 </td>
                 </tr>

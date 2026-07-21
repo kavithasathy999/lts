@@ -75,7 +75,7 @@ function ExpoDetails() {
               </p>
               
               <div className="btn-holder mt-5">
-                <Link to="/" className="btn-premium-gold">
+                <Link to="/registrationForm" className="btn-premium-gold">
                   Exhibitor Registration
                 </Link>
               </div>

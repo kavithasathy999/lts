@@ -77,7 +77,7 @@ function BannerFour() {
                   {data.eventInfo?.title || ""}
                 </h1>
                 <div className="banner-four-actions">
-                  <button className="bannerpage-btn primary" onClick={() => navigate('/')} style={{fontWeight:"700"}}>
+                  <button className="bannerpage-btn primary" onClick={() => navigate('/registrationForm')} style={{fontWeight:"700"}}>
                     Exhibitor Registration
                   </button>
                   <button className='visitor-btn primary' onClick={() => navigate('/forvisitors')} style={{fontWeight:"700"}}>

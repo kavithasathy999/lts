@@ -9,11 +9,6 @@ import WhoShouldExhibit from "../Components/Guide/WhoShouldExhibit";
 import {toast, ToastContainer} from 'react-toastify';
 import PhoneInput from "react-phone-input-2";
 import { parsePhoneNumberFromString } from "libphonenumber-js";
-<<<<<<< HEAD
-=======
-import { Country, State, City } from "country-state-city";
-import Select from "react-select";
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
 import ReCAPTCHA from "react-google-recaptcha";
 
 function ForVisitors() {
@@ -23,12 +18,6 @@ function ForVisitors() {
   const [recaptchaToken, setRecaptchaToken] = useState("");
   const [registered, setRegistered] = useState(false);
   const navigate = useNavigate();
-<<<<<<< HEAD
-=======
-  const [selectedCountry, setSelectedCountry] = useState("");
-  const [selectedState, setSelectedState] = useState("");
-  const [selectedCity, setSelectedCity] = useState(null);
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
   const [file, setFile] = useState(null);
   const fileInputRef = useRef(null);
   const submitToastId = useRef(null);
@@ -54,137 +43,12 @@ function ForVisitors() {
       requestAnimationFrame(() => setTimeout(resolve, 0));
     });
 
-<<<<<<< HEAD
-=======
-  // All countries
-  const countryOptions = Country.getAllCountries().map(c => ({
-    value: c.isoCode,
-    label: c.name
-  }));
-
-  // All states worldwide (independent of country selection)
-  const allStates = State.getAllStates();
-  const allStateOptions = allStates.map(s => ({
-    value: s.isoCode,
-    label: s.name,
-    countryCode: s.countryCode
-  }));
-
-  // States filtered by country if country is selected, else all states
-  const stateOptions = selectedCountry
-    ? State.getStatesOfCountry(selectedCountry).map(s => ({
-        value: s.isoCode,
-        label: s.name,
-        countryCode: selectedCountry
-      }))
-    : allStateOptions;
-
-  // All cities worldwide (independent of state/country)
-  const allCities = City.getAllCities();
-  const allCityOptions = allCities.map(c => ({
-    value: c.name,
-    label: c.name,
-    stateCode: c.stateCode,
-    countryCode: c.countryCode
-  }));
-
-  // Cities filtered by state if state is selected, else all cities
-  const cityOptions = selectedState
-    ? City.getCitiesOfState(
-        selectedCountry || selectedState.countryCode,
-        selectedState.value
-      ).map(c => ({
-        value: c.name,
-        label: c.name,
-        stateCode: selectedState.value,
-        countryCode: selectedCountry || selectedState.countryCode
-      }))
-    : selectedCountry
-    ? City.getCitiesOfCountry(selectedCountry).map(c => ({
-        value: c.name,
-        label: c.name,
-        stateCode: c.stateCode,
-        countryCode: selectedCountry
-      }))
-    : allCityOptions;
-
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
   const [settings, setSettings] = useState({
     event_title: "",
     venue: "",
     event_time: "",
   });
 
-<<<<<<< HEAD
-=======
-  const customSelectStyles = {
-    control: (base) => ({
-      ...base,
-      borderRadius: "10px",
-      borderColor: "#e0e0e0",
-      boxShadow: "none",
-      minHeight: "52px",
-      height: "52px",
-      backgroundColor: "#f9f9f9",
-      "&:hover": { borderColor: "#593983" }
-    }),
-    valueContainer: (base) => ({
-      ...base,
-      padding: "0 12px",
-      height: "50px",
-      display: "flex",
-      alignItems: "center",
-      position: "relative"
-    }),
-    placeholder: (base) => ({
-      ...base,
-      fontFamily: "'Montserrat', sans-serif",
-      fontSize: "0.95rem",
-      fontWeight: "500",
-      color: "#999",
-      margin: 0,
-      padding: 0,
-      position: "absolute",
-      top: "50%",
-      transform: "translateY(-50%)"
-    }),
-    singleValue: (base) => ({
-      ...base,
-      fontFamily: "'Montserrat', sans-serif",
-      fontSize: "0.95rem",
-      fontWeight: "500",
-      color: "#333",
-      margin: 0,
-      padding: 0,
-      position: "absolute",
-      top: "50%",
-      transform: "translateY(-50%)"
-    }),
-    input: (base) => ({
-      ...base,
-      fontFamily: "'Montserrat', sans-serif",
-      fontSize: "0.95rem",
-      margin: 0,
-      padding: 0
-    }),
-    indicatorsContainer: (base) => ({
-      ...base,
-      height: "50px",
-      display: "flex",
-      alignItems: "center"
-    }),
-    option: (base, state) => ({
-      ...base,
-      backgroundColor: state.isSelected
-        ? "#593983"
-        : state.isFocused
-        ? "#f3e0ff"
-        : "#fff",
-      color: state.isSelected ? "#fff" : "#333"
-    })
-  };
-
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     let filteredValue = value;
@@ -194,30 +58,8 @@ function ForVisitors() {
     if (name === "companyName") {
       filteredValue = value.replace(/[^A-Za-z\s.&-]/g, "");
     }
-<<<<<<< HEAD
     if (name === "city" || name === "state" || name === "country") {
       filteredValue = value.replace(/[^A-Za-z\s]/g, "").slice(0, 50);
-=======
-    if (!formData.designation.trim()) {
-      setErrors.designation = "Designation is required";
-    } else if (!/^[A-Za-z\s]+$/.test(formData.designation)) {
-      setErrors.designation = "Only alphabets are allowed";
-    }
-    if (!formData.visitorType) {
-      setErrors.visitorType = "Visitor type is required";
-    }
-    if (!formData.country.trim()) {
-      setErrors.country = "Country is required";
-    }
-    if (!formData.state.trim()) {
-      setErrors.state = "State is required";
-    }
-    if (!formData.city.trim()) {
-      setErrors.city = "City is required";
-    }
-    if (!formData.visitorType) {
-      setErrors.visitorType = "Visitor type is required";
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
     }
     setFormData({
       ...formData,
@@ -348,7 +190,6 @@ function ForVisitors() {
     } else if (!emailRegex.test(formData.email)) {
       newErrors.email = "Please enter a valid email address";
     }
-<<<<<<< HEAD
     if (!formData.country.trim()) {
       newErrors.country = "Country is required";
     } else if (!nameRegex.test(formData.country)) {
@@ -369,16 +210,6 @@ function ForVisitors() {
       newErrors.city = "Only alphabets allowed";
     } else if (formData.city.length > 50) {
       newErrors.city = "City cannot exceed 50 characters";
-=======
-    if (!formData.country) {
-      newErrors.country = "Country is required";
-    }
-    if (!formData.state) {
-      newErrors.state = "State is required";
-    }
-    if (!formData.city) {
-      newErrors.city = "City is required";
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
     }
     if (!formData.pincode.trim()) {
       newErrors.pincode = "Pincode is required";
@@ -504,17 +335,10 @@ function ForVisitors() {
             </div>
             <div className="col-lg-6">
               <h2 className="fw-bold mb-3 visitors-title">
-<<<<<<< HEAD
                 Luxury Travel Show 2026
               </h2>
               <p className="text-dark visitors-text">
                 We Travel Agent Association of Coimbatore happy to invite you  for the trade visitor registration for our  2nd Edition of Luxury Travel Show – 2026 to be held on 01st August 2026 at Hotel Merlis , Avinashi Road, Goldwins , Coimbatore- 641014 .
-=======
-                Luxury Travel Show Visitor Registration 
-              </h2>
-              <p className="text-dark visitors-text">
-                We Travel Agent Association of Coimbatore happy to invite you  for the trade visitor registration for our  2nd Edition of Luxury Travel Show – 2026 to be held on 01st August 2026 at Hotel Merlis , Avinashi Road, Gold Wins , Coimbatore- 641014 .
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
               </p>
               <p className="text-dark visitors-text">
               Visit and explore the Luxury B2B travel show at LTS 2026. Meet more than 85 Plus exhibitors from more than 10 countries and Major Indian States & Union Territories ensuring a remarkable networking and business experience with the best in the travel Industry.
@@ -548,11 +372,7 @@ function ForVisitors() {
                     letterSpacing: "-1px"
                   }}
                 >
-<<<<<<< HEAD
                   Trade Visitor Registration
-=======
-                  Visitor Registration
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
                 </h2>              
                 <form onSubmit={handleSubmit}>
                   <div className="row g-4">
@@ -708,7 +528,6 @@ function ForVisitors() {
 
                     {/* CITY - First field */}
                     <div className="col-md-6">
-<<<<<<< HEAD
                       <label className="form-label-custom">
                         City <span className="text-danger" style={{ fontSize: "1rem", fontWeight: "600", lineHeight: "1" }}>*</span>
                       </label>
@@ -720,58 +539,12 @@ function ForVisitors() {
                         placeholder="Enter City"
                         onChange={handleInputChange}
                         maxLength={50}
-=======
-                      <label className="form-label small fw-bold text-uppercase text-dark">
-                        City <span className="text-danger" style={{ fontSize: "1rem", fontWeight: "600", lineHeight: "1" }}>*</span>
-                      </label>
-                      <Select
-                        options={cityOptions}
-                        placeholder="Type to search city..."
-                        value={selectedCity}
-                        isClearable
-                        filterOption={(option, inputValue) => {
-                          if (!inputValue || inputValue.length < 2) return false;
-                          return option.label.toLowerCase().includes(inputValue.toLowerCase());
-                        }}
-                        noOptionsMessage={({ inputValue }) =>
-                          !inputValue || inputValue.length < 2
-                            ? 'Type at least 2 characters to search'
-                            : 'No cities found'
-                        }
-                        onChange={(opt) => {
-                          if (!opt) {
-                            setSelectedCity(null);
-                            setFormData({ ...formData, city: "" });
-                            return;
-                          }
-                          setSelectedCity(opt);
-                          // Auto-fill state and country from city data
-                          const stateObj = opt.stateCode && opt.countryCode
-                            ? State.getStatesOfCountry(opt.countryCode).find(s => s.isoCode === opt.stateCode)
-                            : null;
-                          const countryObj = opt.countryCode
-                            ? Country.getCountryByCode(opt.countryCode)
-                            : null;
-                          const newState = stateObj ? { value: stateObj.isoCode, label: stateObj.name, countryCode: opt.countryCode } : selectedState;
-                          const newCountryCode = opt.countryCode || selectedCountry;
-                          setSelectedState(newState || null);
-                          setSelectedCountry(newCountryCode || "");
-                          setFormData({
-                            ...formData,
-                            city: opt.label,
-                            state: stateObj ? stateObj.name : (formData.state || ""),
-                            country: countryObj ? countryObj.name : (formData.country || "")
-                          });
-                        }}
-                        styles={customSelectStyles}
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
                       />
                       {errors.city && <small className="text-danger">{errors.city}</small>}
                     </div>
 
                     {/* STATE - Second field */}
                     <div className="col-md-6">
-<<<<<<< HEAD
                       <label className="form-label-custom">
                         State <span className="text-danger" style={{ fontSize: "1rem", fontWeight: "600", lineHeight: "1" }}>*</span>
                       </label>
@@ -783,44 +556,12 @@ function ForVisitors() {
                         placeholder="Enter State"
                         onChange={handleInputChange}
                         maxLength={50}
-=======
-                      <label className="form-label small fw-bold text-uppercase text-dark">
-                        State <span className="text-danger" style={{ fontSize: "1rem", fontWeight: "600", lineHeight: "1" }}>*</span>
-                      </label>
-                      <Select
-                        options={stateOptions}
-                        placeholder="Type to search state..."
-                        value={selectedState}
-                        isClearable
-                        onChange={(opt) => {
-                          if (!opt) {
-                            setSelectedState(null);
-                            setSelectedCity(null);
-                            setFormData({ ...formData, state: "", city: "" });
-                            return;
-                          }
-                          setSelectedState(opt);
-                          setSelectedCity(null);
-                          // Auto-fill country from state data
-                          const countryObj = opt.countryCode ? Country.getCountryByCode(opt.countryCode) : null;
-                          const newCountryCode = opt.countryCode || selectedCountry;
-                          setSelectedCountry(newCountryCode || "");
-                          setFormData({
-                            ...formData,
-                            state: opt.label,
-                            city: "",
-                            country: countryObj ? countryObj.name : (formData.country || "")
-                          });
-                        }}
-                        styles={customSelectStyles}
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
                       />
                       {errors.state && <small className="text-danger">{errors.state}</small>}
                     </div>
 
                     {/* COUNTRY - Third field */}
                     <div className="col-md-6">
-<<<<<<< HEAD
                       <label className="form-label-custom">
                         Country <span className="text-danger" style={{ fontSize: "1rem", fontWeight: "600", lineHeight: "1" }}>*</span>
                       </label>
@@ -832,35 +573,6 @@ function ForVisitors() {
                         placeholder="Enter Country"
                         onChange={handleInputChange}
                         maxLength={50}
-=======
-                      <label className="form-label small fw-bold text-uppercase text-dark">
-                        Country <span className="text-danger" style={{ fontSize: "1rem", fontWeight: "600", lineHeight: "1" }}>*</span>
-                      </label>
-                      <Select
-                        options={countryOptions}
-                        placeholder="Type to search country..."
-                        value={
-                          selectedCountry
-                            ? countryOptions.find(opt => opt.value === selectedCountry) || null
-                            : null
-                        }
-                        isClearable
-                        onChange={(opt) => {
-                          if (!opt) {
-                            setSelectedCountry("");
-                            setSelectedState(null);
-                            setSelectedCity(null);
-                            setFormData({ ...formData, country: "", state: "", city: "" });
-                            return;
-                          }
-                          setSelectedCountry(opt.value);
-                          setSelectedState(null);
-                          setSelectedCity(null);
-                          setFormData({ ...formData, country: opt.label, state: "", city: "" });
-                        }}
-                        isDisabled={loadingAction}
-                        styles={customSelectStyles}
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
                       />
                       {errors.country && <small className="text-danger">{errors.country}</small>}
                     </div>

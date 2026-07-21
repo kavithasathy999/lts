@@ -76,10 +76,7 @@ function VoucherAdmin() {
                                 if (selectedFile) {
                                     setFile(selectedFile);
                                 }
-<<<<<<< HEAD
                                 e.target.value = "";
-=======
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
                             }}
                         />
                     </div>

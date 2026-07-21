@@ -11,7 +11,6 @@ const fs = require("fs");
 const bodyParser = require("body-parser");
 
 const app = express();
-<<<<<<< HEAD
 const allowedOrigins = [
   "https://luxurytravelshow.in",
   "https://www.luxurytravelshow.in",
@@ -33,20 +32,6 @@ app.use(cors({
     console.warn(`[CORS] Blocked request from origin: ${origin}`);
     callback(null, false);
   },
-=======
-app.use(cors({
-  origin: [
-    "http://127.0.0.1:3000",
-    "http://127.0.0.1:3001",
-    "http://localhost:3000",
-    "http://localhost:3001",
-    "https://luxurytravelshow.in",
-    "https://www.luxurytravelshow.in",
-    "https://api.luxurytravelshow.in",
-    "https://luxurytravelshow.saitechnosolutions.com",
-    "https://luxurydashboard.saitechnosolutions.com"
-  ],
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
   credentials: true
 }));
 
@@ -199,11 +184,7 @@ const voucherStorage = multer.diskStorage({
     cb(null, path.join(__dirname, "uploads", "brochure"));
   },
   filename: (req, file, cb) => {
-<<<<<<< HEAD
     cb(null, "Golden-Travels.pdf");
-=======
-    cb(null, `${Date.now()}-${file.originalname}`);
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
   }
 });
 const uploadVoucher = multer({ storage: voucherStorage, limits: { fileSize: 50 * 1024 * 1024 } });
@@ -262,11 +243,8 @@ const buildVisitorEmailHtml = (visitor, isForAdmin, status = "Pending", qrCid = 
     statusTextHtml = `<span style="background-color: #00ff00; padding: 2px 6px; font-weight: bold; color: #000000; border-radius: 3px;">Approved</span>`;
   } else if (lStatus === "rejected" || lStatus === "rejection") {
     statusTextHtml = `<span style="background-color: #ffe6e6; padding: 2px 6px; font-weight: bold; color: #d2232a; border-radius: 3px; border: 1px solid #d2232a;">Rejected</span>`;
-<<<<<<< HEAD
   } else if (lStatus === "visited") {
     statusTextHtml = `<span style="background-color: #008000; padding: 2px 6px; font-weight: bold; color: #ffffff; border-radius: 3px;">Checked-In</span>`;
-=======
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
   } else {
     statusTextHtml = `<span style="background-color: #ffff00; padding: 2px 6px; font-weight: bold; color: #000000; border-radius: 3px;">Pending</span>`;
   }
@@ -302,12 +280,9 @@ const buildVisitorEmailHtml = (visitor, isForAdmin, status = "Pending", qrCid = 
     } else if (lStatus === "rejected" || lStatus === "rejection") {
       congratTitle = "Registration Status Update";
       bodyParagraph = `Thank you for your interest in participating in <strong style="color: #593983;">LTS 2026</strong>. After careful review by the organizing team, we regret to inform you that your registration submission has not been approved at this time. We appreciate the effort taken to submit your application and thank you for your interest in the event. For any further clarification, please feel free to contact the organizing team through the official communication channels.`;
-<<<<<<< HEAD
     } else if (lStatus === "visited") {
       congratTitle = "Luxury Travel Show 2026";
       bodyParagraph = `Thank you for visiting the <strong style="color: #593983;">LTS 2026</strong>.`;
-=======
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
     } else {
       congratTitle = "Congratulations! Your Registration has been Received!";
       bodyParagraph = `We have received your registration submission for <strong style="color: #593983;">LTS 2026</strong>. The registration is currently under review by the organizing team. Further communication and confirmation will be sent directly your registered email.`;
@@ -394,10 +369,7 @@ const buildVisitorEmailHtml = (visitor, isForAdmin, status = "Pending", qrCid = 
                   </p>
                   
                   <!-- Registration Details -->
-<<<<<<< HEAD
                   ${lStatus !== "visited" ? `
-=======
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
                   <h3 style="color: #111111; font-size: 15px; font-weight: bold; margin-top: 0; margin-bottom: 12px;">
                     Registration Details
                   </h3>
@@ -407,11 +379,7 @@ const buildVisitorEmailHtml = (visitor, isForAdmin, status = "Pending", qrCid = 
                         &bull;
                       </td>
                       <td valign="top" width="150" style="font-family: Arial, sans-serif; font-size: 14px; color: #111111; font-weight: bold; line-height: 1.6; padding: 4px 0; width: 150px;">
-<<<<<<< HEAD
                         Name:
-=======
-                        Registrant:
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
                       </td>
                       <td valign="top" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0;">
                         ${fullName}
@@ -439,22 +407,6 @@ const buildVisitorEmailHtml = (visitor, isForAdmin, status = "Pending", qrCid = 
                         ${statusTextHtml}
                       </td>
                     </tr>
-<<<<<<< HEAD
-=======
-                    ${visitorId ? `
-                    <tr>
-                      <td valign="top" width="15" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0; width: 15px;">
-                        &bull;
-                      </td>
-                      <td valign="top" width="150" style="font-family: Arial, sans-serif; font-size: 14px; color: #111111; font-weight: bold; line-height: 1.6; padding: 4px 0; width: 150px;">
-                        Visitor ID:
-                      </td>
-                      <td valign="top" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0;">
-                        ${visitorId}
-                      </td>
-                    </tr>
-                    ` : ""}
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
                     ${isForAdmin ? `
                     <tr>
                       <td valign="top" width="15" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0; width: 15px;">
@@ -515,10 +467,7 @@ const buildVisitorEmailHtml = (visitor, isForAdmin, status = "Pending", qrCid = 
                     ` : ""}
                     ` : ""}
                   </table>
-<<<<<<< HEAD
                   ` : ""}
-=======
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
                   
                   <!-- Visitor Badge / QR Code (If Approved) -->
                   ${qrCid ? `
@@ -606,11 +555,321 @@ const buildVisitorEmailHtml = (visitor, isForAdmin, status = "Pending", qrCid = 
               
               <!-- Red Bottom Bar Accent -->
               <tr>
-<<<<<<< HEAD
                 <td style="background-color: #593983; height: 10px; font-size: 1px; line-height: 1px;">
-=======
-                <td style="background-color: #d2232a; height: 10px; font-size: 1px; line-height: 1px;">
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
+                  &nbsp;
+                </td>
+              </tr>
+              
+            </table>
+          </td>
+        </tr>
+      </table>
+    </body>
+    </html>
+  `;
+};
+
+const buildExhibitorEmailHtml = (exhibitor, isForAdmin, status = "Pending") => {
+  const ex = exhibitor || {};
+  const name = ex.name || "Exhibitor";
+  const company = ex.company || "";
+  const email = ex.email || "";
+  const mobile = ex.mobile || "";
+  const numberOfExhibitors = ex.numberOfExhibitors || "";
+  const zoneName = ex.zoneName || ex.zone || "";
+  const stallNo = ex.stallNo || ex.stall || "";
+  
+  const addressParts = [];
+  if (ex.address1) addressParts.push(ex.address1);
+  if (ex.address2) addressParts.push(ex.address2);
+  if (ex.city) addressParts.push(ex.city);
+  if (ex.state) addressParts.push(ex.state);
+  if (ex.country) addressParts.push(ex.country);
+  if (ex.pincode) addressParts.push(ex.pincode);
+  const fullAddress = addressParts.join(", ") || "N/A";
+
+  const lStatus = status.toLowerCase();
+  let statusTextHtml = "";
+  if (lStatus === "approved" || lStatus === "approval" || lStatus === "confirmed") {
+    statusTextHtml = `<span style="background-color: #00ff00; padding: 2px 6px; font-weight: bold; color: #000000; border-radius: 3px;">Confirmed</span>`;
+  } else if (lStatus === "rejected" || lStatus === "rejection") {
+    statusTextHtml = `<span style="background-color: #ffe6e6; padding: 2px 6px; font-weight: bold; color: #d2232a; border-radius: 3px; border: 1px solid #d2232a;">Rejected</span>`;
+  } else {
+    statusTextHtml = `<span style="background-color: #ffff00; padding: 2px 6px; font-weight: bold; color: #000000; border-radius: 3px;">Pending</span>`;
+  }
+
+  let congratTitle = "";
+  let bodyParagraph = "";
+
+  if (isForAdmin) {
+    congratTitle = "Congratulations! You've Received a New Exhibitor Registration!";
+    bodyParagraph = `We have received a registration submission from <strong>${company}</strong> for <strong style="color: #593983;">LTS 2026</strong>. The registration is currently under review by the organizing team. Further communication and confirmation will be sent directly to the registered email address upon completion of the evaluation process.`;
+  } else {
+    congratTitle = "Congratulations! Your Registration has been Received!";
+    bodyParagraph = `We have received your registration submission for <strong style="color: #593983;">LTS 2026</strong>. The registration is currently under review by the organizing team. Further communication and confirmation will be sent directly your registered email.`;
+  }
+
+  return `
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    <html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+      <title>LTS 2026 Registration</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+      <style type="text/css">
+        body {
+          width: 100% !important; 
+          -webkit-text-size-adjust: 100%; 
+          -ms-text-size-adjust: 100%; 
+          margin: 0; 
+          padding: 0;
+          background-color: #f5f5f5;
+        }
+        @media only screen and (max-width: 600px) {
+          .email-card { 
+            width: 100% !important; 
+            max-width: 100% !important; 
+            border-radius: 0px !important; 
+            border-left: 0 !important;
+            border-right: 0 !important;
+          }
+          .email-body { 
+            padding: 25px 20px !important; 
+          }
+          .col-stack { 
+            display: block !important; 
+            width: 100% !important; 
+            max-width: 100% !important; 
+            box-sizing: border-box !important; 
+            float: none !important; 
+            margin-bottom: 15px !important; 
+          }
+          .sponsors-wrapper { 
+            padding: 25px 20px !important; 
+          }
+        }
+      </style>
+    </head>
+    <body style="margin: 0; padding: 20px 0; background-color: #f5f5f5; font-family: Arial, sans-serif;">
+      <table border="0" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed; background-color: #f5f5f5;">
+        <tr>
+          <td align="center" style="padding: 10px 0;">
+            <table class="email-card" border="0" cellpadding="0" cellspacing="0" width="600" style="border-collapse: collapse; background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 6px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+              
+              <!-- Header Row (Centered Logo) -->
+              <tr>
+                <td align="center" style="padding: 25px 30px 20px 30px; border-bottom: 1px solid #eeeeee;">
+                  <table border="0" cellpadding="0" cellspacing="0" style="margin: 0 auto;">
+                    <tr>
+                      <td align="center">
+                        <img src="cid:${EMAIL_LOGO_CID}" width="120" alt="LTS Logo" style="display: block; width: 120px; height: auto; border: 0; outline: none;" />
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              
+              <!-- Body Content Row -->
+              <tr>
+                <td class="email-body" style="padding: 30px 30px 20px 30px; font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6;">
+                  
+                  <!-- Title -->
+                  <h2 style="color: #593983; font-size: 18px; font-weight: bold; margin-top: 0; margin-bottom: 20px; line-height: 1.3;">
+                    ${congratTitle}
+                  </h2>
+                  
+                  <!-- Salutation -->
+                  <p style="margin-top: 0; margin-bottom: 15px;">
+                    Dear <strong style="color: #593983;">${isForAdmin ? 'Admin' : name}</strong>,
+                  </p>
+                  
+                  <!-- Main Paragraph -->
+                  <p style="margin-top: 0; margin-bottom: 25px; color: #333333;">
+                    ${bodyParagraph}
+                  </p>
+                  
+                  <!-- Registration Details -->
+                  <h3 style="color: #111111; font-size: 15px; font-weight: bold; margin-top: 0; margin-bottom: 12px;">
+                    Registration Details
+                  </h3>
+                  <table border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse; margin-bottom: 25px; width: 100%;">
+                    <tr>
+                      <td valign="top" width="15" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0; width: 15px;">
+                        &bull;
+                      </td>
+                      <td valign="top" width="160" style="font-family: Arial, sans-serif; font-size: 14px; color: #111111; font-weight: bold; line-height: 1.6; padding: 4px 0; width: 160px;">
+                        Name:
+                      </td>
+                      <td valign="top" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0;">
+                        ${name}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td valign="top" width="15" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0; width: 15px;">
+                        &bull;
+                      </td>
+                      <td valign="top" width="160" style="font-family: Arial, sans-serif; font-size: 14px; color: #111111; font-weight: bold; line-height: 1.6; padding: 4px 0; width: 160px;">
+                        Company:
+                      </td>
+                      <td valign="top" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0;">
+                        ${company}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td valign="top" width="15" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0; width: 15px;">
+                        &bull;
+                      </td>
+                      <td valign="top" width="160" style="font-family: Arial, sans-serif; font-size: 14px; color: #111111; font-weight: bold; line-height: 1.6; padding: 4px 0; width: 160px;">
+                        Registration Status:
+                      </td>
+                      <td valign="top" style="font-family: Arial, sans-serif; font-size: 14px; color: #111111; line-height: 1.6; padding: 4px 0;">
+                        ${statusTextHtml}
+                      </td>
+                    </tr>
+                    ${isForAdmin ? `
+                    <tr>
+                      <td valign="top" width="15" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0; width: 15px;">
+                        &bull;
+                      </td>
+                      <td valign="top" width="160" style="font-family: Arial, sans-serif; font-size: 14px; color: #111111; font-weight: bold; line-height: 1.6; padding: 4px 0; width: 160px;">
+                        Email Address:
+                      </td>
+                      <td valign="top" style="font-family: Arial, sans-serif; font-size: 14px; color: #2b7cb2; text-decoration: underline; line-height: 1.6; padding: 4px 0; word-break: break-all;">
+                        <a href="mailto:${email}" style="color: #2b7cb2; text-decoration: underline;">${email}</a>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td valign="top" width="15" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0; width: 15px;">
+                        &bull;
+                      </td>
+                      <td valign="top" width="160" style="font-family: Arial, sans-serif; font-size: 14px; color: #111111; font-weight: bold; line-height: 1.6; padding: 4px 0; width: 160px;">
+                        Mobile Number:
+                      </td>
+                      <td valign="top" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0;">
+                        ${mobile}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td valign="top" width="15" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0; width: 15px;">
+                        &bull;
+                      </td>
+                      <td valign="top" width="160" style="font-family: Arial, sans-serif; font-size: 14px; color: #111111; font-weight: bold; line-height: 1.6; padding: 4px 0; width: 160px;">
+                        Number of Exhibitors:
+                      </td>
+                      <td valign="top" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0;">
+                        ${numberOfExhibitors}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td valign="top" width="15" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0; width: 15px;">
+                        &bull;
+                      </td>
+                      <td valign="top" width="160" style="font-family: Arial, sans-serif; font-size: 14px; color: #111111; font-weight: bold; line-height: 1.6; padding: 4px 0; width: 160px;">
+                        Zone:
+                      </td>
+                      <td valign="top" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0;">
+                        ${zoneName}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td valign="top" width="15" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0; width: 15px;">
+                        &bull;
+                      </td>
+                      <td valign="top" width="160" style="font-family: Arial, sans-serif; font-size: 14px; color: #111111; font-weight: bold; line-height: 1.6; padding: 4px 0; width: 160px;">
+                        Stall Number:
+                      </td>
+                      <td valign="top" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0;">
+                        ${stallNo}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td valign="top" width="15" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0; width: 15px;">
+                        &bull;
+                      </td>
+                      <td valign="top" width="160" style="font-family: Arial, sans-serif; font-size: 14px; color: #111111; font-weight: bold; line-height: 1.6; padding: 4px 0; width: 160px;">
+                        Address:
+                      </td>
+                      <td valign="top" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0;">
+                        ${fullAddress}
+                      </td>
+                    </tr>
+                    ` : ""}
+                  </table>
+                  
+                  <!-- Support & Closing -->
+                  <p style="margin-top: 25px; margin-bottom: 15px; font-size: 13px; color: #333333;">
+                    If you have any queries, feel free to contact us at <a href="mailto:events@taac.org.in" style="color: #2b7cb2; text-decoration: underline;">events@taac.org.in</a>, +91 99944 59099
+                  </p>
+                  
+                  <p style="margin-top: 20px; margin-bottom: 5px; font-size: 13px; color: #666666;">
+                    Thank you
+                  </p>
+                  <p style="margin-top: 0; margin-bottom: 15px; font-size: 14px; font-weight: bold; color: #111111;">
+                    <strong style="color: #593983;">TEAM LTS2026</strong>
+                  </p>
+                </td>
+              </tr>
+              
+              <!-- Sponsors Section -->
+              <tr>
+                <td class="sponsors-wrapper" style="padding: 20px 30px; background-color: #ffffff; border-top: 1px solid #eeeeee;">
+                  <!--[if mso]>
+                  <table border="0" cellpadding="0" cellspacing="0" width="100%" style="width: 100%;">
+                    <tr>
+                      <td width="260" valign="top" style="width: 260px;">
+                  <![endif]-->
+                  <table class="col-stack" align="left" border="0" cellpadding="0" cellspacing="0" width="48%" style="border-collapse: collapse; width: 48%; max-width: 260px; border: 1px solid #eeeeee; border-radius: 8px; background-color: #fafafa;">
+                    <tr>
+                      <td align="center" style="padding: 15px 15px 5px 15px; font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; color: #111111;">
+                        Title Sponsor
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="center" style="padding: 5px 15px 15px 15px; height: 90px; vertical-align: middle;">
+                        <img src="cid:${EMAIL_IMG1_CID}" alt="Title Sponsor" width="130" style="display: block; width: 100%; max-width: 130px; height: auto; border: 0; outline: none;" />
+                      </td>
+                    </tr>
+                  </table>
+                  <!--[if mso]>
+                      </td>
+                      <td width="20" style="width: 20px;">&nbsp;</td>
+                      <td width="260" valign="top" style="width: 260px;">
+                  <![endif]-->
+                  <table class="col-stack" align="right" border="0" cellpadding="0" cellspacing="0" width="48%" style="border-collapse: collapse; width: 48%; max-width: 260px; border: 1px solid #eeeeee; border-radius: 8px; background-color: #fafafa;">
+                    <tr>
+                      <td align="center" style="padding: 15px 15px 5px 15px; font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; color: #111111;">
+                        Co-Sponsors
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="center" style="padding: 5px 15px 15px 15px; height: 90px; vertical-align: middle;">
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="width: 100%;">
+                          <tr>
+                            <td align="center" width="33%" style="width: 33%; padding: 0 3px; vertical-align: middle;">
+                              <img src="cid:${EMAIL_IMG2_CID}" alt="Co-Sponsor 1" width="55" style="display: block; width: 100%; max-width: 55px; height: auto; border: 0; outline: none;" />
+                            </td>
+                            <td align="center" width="33%" style="width: 33%; padding: 0 3px; vertical-align: middle;">
+                              <img src="cid:${EMAIL_IMG3_CID}" alt="Co-Sponsor 2" width="55" style="display: block; width: 100%; max-width: 55px; height: auto; border: 0; outline: none;" />
+                            </td>
+                            <td align="center" width="33%" style="width: 33%; padding: 0 3px; vertical-align: middle;">
+                              <img src="cid:${EMAIL_IMG4_CID}" alt="Co-Sponsor 3" width="55" style="display: block; width: 100%; max-width: 55px; height: auto; border: 0; outline: none;" />
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                  </table>
+                  <!--[if mso]>
+                      </td>
+                    </tr>
+                  </table>
+                  <![endif]-->
+                </td>
+              </tr>
+              
+              <!-- Bottom Purple Accent Line -->
+              <tr>
+                <td style="background-color: #593983; height: 10px; font-size: 1px; line-height: 1px;">
                   &nbsp;
                 </td>
               </tr>
@@ -680,8 +939,8 @@ app.post("/api/upload-profile", upload.single("photo"), (req, res) => {
 
 app.post("/api/login", (req, res) => {
   const { email, password } = req.body;
-  const ADMIN_EMAIL = "lts@gmail.com";
-  const ADMIN_PASSWORD = "lts@2026";
+  const ADMIN_EMAIL = "events@taac.org.in";
+  const ADMIN_PASSWORD = "Bxr$5193Tn";
   if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
     db.query("SELECT * FROM admins WHERE email = ?", [ADMIN_EMAIL], (err, rows) => {
       if (err) {
@@ -696,7 +955,12 @@ app.post("/api/login", (req, res) => {
           profile_photo: adminData.profile_photo
         });
       } else {
-        return res.status(404).json({ message: "Admin record not found in database" });
+        return res.json({
+          id: 1,
+          username: "Admin",
+          email: ADMIN_EMAIL,
+          profile_photo: null
+        });
       }
     });
   } else {
@@ -761,7 +1025,6 @@ app.get("/api/banner", (req, res) => {
     if (err) return res.status(500).json(err);
     db.query("SELECT * FROM event_info WHERE id=1", (err2, eventResult) => {
       if (err2) return res.status(500).json(err2);
-<<<<<<< HEAD
       const protocol = req.protocol;
       const host = req.get('host');
       const formattedSlides = slidesResult.map(slide => {
@@ -779,10 +1042,6 @@ app.get("/api/banner", (req, res) => {
       });
       res.json({
         slides: formattedSlides,
-=======
-      res.json({
-        slides: slidesResult,
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
         eventInfo: eventResult[0] || {}
       });
     });
@@ -796,11 +1055,7 @@ app.post("/api/banner", upload.array('slides'), (req, res) => {
     if (err) return res.status(500).json({ error: "Database error updating info" });
     if (req.files && req.files.length > 0) {
       const slideValues = req.files.map(file => [
-<<<<<<< HEAD
         `uploads/${file.filename}`
-=======
-        `${process.env.REACT_APP_API_BASE_URL}/uploads/${file.filename}`
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
       ]);
       const insertSlidesSql = "INSERT INTO slides (image) VALUES ?";
       db.query(insertSlidesSql, [slideValues], (err2) => {
@@ -838,7 +1093,6 @@ app.get("/api/video", (req, res) => {
   db.query("SELECT * FROM aboutpage_video LIMIT 1", (err, result) => {
     if (err) return res.status(500).json(err);
     if (result.length === 0) return res.json({ videoUrl: "" });
-<<<<<<< HEAD
     const protocol = req.protocol;
     const host = req.get('host');
     let videoUrl = result[0].video_url;
@@ -848,21 +1102,13 @@ app.get("/api/video", (req, res) => {
     const cleanPath = videoUrl.startsWith("/") ? videoUrl.substring(1) : videoUrl;
     res.json({
       videoUrl: `${protocol}://${host}/${cleanPath.replace(/\\/g, "/")}`
-=======
-    res.json({
-      videoUrl: `${process.env.REACT_APP_API_BASE_URL}/${result[0].video_url}`
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
     });
   });
 });
 
 app.post("/api/video", videoUpload.single("video"), (req, res) => {
   if (!req.file) return res.status(400).json({ error: "No file uploaded" });
-<<<<<<< HEAD
   const filePath = path.relative(__dirname, req.file.path).replace(/\\/g, "/");
-=======
-  const filePath = req.file.path;
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
   db.query("DELETE FROM aboutpage_video", (err) => {
     if (err) return res.status(500).json(err);
     db.query(
@@ -870,15 +1116,10 @@ app.post("/api/video", videoUpload.single("video"), (req, res) => {
       [filePath],
       (err) => {
         if (err) return res.status(500).json(err);
-<<<<<<< HEAD
         const protocol = req.protocol;
         const host = req.get('host');
         res.json({
           videoUrl: `${protocol}://${host}/${filePath}`
-=======
-        res.json({
-          videoUrl: `${process.env.REACT_APP_API_BASE_URL}/${filePath}`
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
         });
       }
     );
@@ -902,7 +1143,6 @@ app.get("/api/map", (req, res) => {
   db.query("SELECT * FROM registerform_map LIMIT 1", (err, result) => {
     if (err) return res.status(500).json(err);
     if (result.length === 0) return res.json({ mapImageUrl: "" });
-<<<<<<< HEAD
     const protocol = req.protocol;
     const host = req.get('host');
     let mapUrl = result[0].map_url;
@@ -911,19 +1151,12 @@ app.get("/api/map", (req, res) => {
     }
     const cleanPath = mapUrl.startsWith("/") ? mapUrl.substring(1) : mapUrl;
     res.json({ mapImageUrl: `${protocol}://${host}/${cleanPath.replace(/\\/g, "/")}` });
-=======
-    res.json({ mapImageUrl: `${process.env.REACT_APP_API_BASE_URL}/${result[0].map_url}` });
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
   });
 });
 
 app.post("/api/map", mapUpload.single("map"), (req, res) => {
   if (!req.file) return res.status(400).json({ error: "No file uploaded" });
-<<<<<<< HEAD
   const filePath = path.relative(__dirname, req.file.path).replace(/\\/g, "/");
-=======
-  const filePath = req.file.path;
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
   db.query("SELECT * FROM registerform_map LIMIT 1", (err, result) => {
     if (err) return res.status(500).json(err);
     if (result.length > 0) {
@@ -933,13 +1166,9 @@ app.post("/api/map", mapUpload.single("map"), (req, res) => {
     }
     db.query("INSERT INTO registerform_map (map_url) VALUES (?)", [filePath], (err) => {
       if (err) return res.status(500).json(err);
-<<<<<<< HEAD
       const protocol = req.protocol;
       const host = req.get('host');
       res.json({ mapImageUrl: `${protocol}://${host}/${filePath}` });
-=======
-      res.json({ mapImageUrl: `${process.env.REACT_APP_API_BASE_URL}/${filePath}` });
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
     });
   });
 });
@@ -964,7 +1193,6 @@ app.get("/api/sponsors/:type", (req, res) => {
     [type],
     (err, result) => {
       if (err) return res.status(500).json(err);
-<<<<<<< HEAD
       const protocol = req.protocol;
       const host = req.get('host');
       res.json({
@@ -979,13 +1207,6 @@ app.get("/api/sponsors/:type", (req, res) => {
             imageUrl: `${protocol}://${host}/${cleanPath}`
           };
         })
-=======
-      res.json({
-        sponsors: result.map(row => ({
-          id: row.id,
-          imageUrl: `${process.env.REACT_APP_API_BASE_URL}/${row.image_url.replace(/\\/g, "/")}`
-        }))
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
       });
     }
   );
@@ -995,14 +1216,10 @@ app.post("/api/sponsors", sponsorUpload.array("images", 10), (req, res) => {
   const { type } = req.body;
   if (!req.files || req.files.length === 0)
     return res.status(400).json({ error: "No files uploaded" });
-<<<<<<< HEAD
   const values = req.files.map(file => [
     path.relative(__dirname, file.path).replace(/\\/g, "/"),
     type
   ]);
-=======
-  const values = req.files.map(file => [file.path, type]);
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
   db.query(
     "INSERT INTO sponsor_images (image_url, sponsor_type) VALUES ?",
     [values],
@@ -1104,6 +1321,25 @@ app.post("/api/register", async (req, res) => {
           db.query("SELECT setting_value FROM exhibitor_settings WHERE setting_key = 'event_title'", async (errSettings, settingResult) => {
             const currentEventTitle = settingResult[0]?.setting_value || "Our Event";
             try {
+              const exhibitorData = {
+                name,
+                company,
+                email,
+                mobile,
+                numberOfExhibitors,
+                zoneName,
+                stallNo,
+                address1,
+                address2,
+                city,
+                state,
+                country,
+                pincode
+              };
+              const userHtml = buildExhibitorEmailHtml(exhibitorData, false, "Pending");
+              const adminHtml = buildExhibitorEmailHtml(exhibitorData, true, "Pending");
+              const attachments = getEmailAttachments();
+
               console.log(`\x1b[36m[📧 EMAIL TRIGGER]\x1b[0m Exhibitor Registration Confirmation`);
               console.log(`  \x1b[33mFROM:\x1b[0m ${process.env.EMAIL_USER}`);
               console.log(`  \x1b[33mTO  :\x1b[0m ${email}`);
@@ -1112,156 +1348,11 @@ app.post("/api/register", async (req, res) => {
                 from: process.env.EMAIL_USER,
                 to: email,
                 subject: `Registration Confirmation - ${currentEventTitle}`,
-                html: `
-                <style>
-                  @media only screen and (max-width: 600px) {
-                    .lts-register-shell { padding: 12px 0 !important; }
-                    .lts-register-card { width: 100% !important; max-width: 100% !important; border-radius: 0 !important; }
-                    .lts-register-header { padding: 24px 14px !important; }
-                    .lts-register-body { padding: 22px 12px !important; }
-                    .lts-register-copy { font-size: 14px !important; line-height: 1.7 !important; }
-                    .lts-details-box { padding: 12px !important; margin: 22px 0 !important; }
-                    .lts-detail-table td { font-size: 14px !important; word-break: break-word !important; }
-                  }
-                  @media only screen and (min-width: 601px) and (max-width: 900px) {
-                    .lts-register-card { max-width: 560px !important; }
-                    .lts-register-body { padding: 25px 18px !important; }
-                  }
-                </style>
-                <div class="lts-register-shell" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f9f9f9; padding: 20px 0; color: #333;"> <div class="lts-register-card" style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">                 
-                  <div class="lts-register-header" style="background-color: #512e8e; padding: 30px; text-align: center;">
-                  ${emailLogoHtml(currentEventTitle, "color: #ffffff; margin: 0; font-size: 24px; letter-spacing: 1px; text-transform: uppercase; font-weight: bold; line-height: 1.2;")}
-                    <div style="width: 50px; height: 2px; background: #ffffff; margin: 15px auto 0; opacity: 0.5;"></div>
-                  </div>
-                  <div class="lts-register-body" style="padding: 25px 15px; text-align: center;"> <p style="font-size: 18px; margin-bottom: 10px;">Hello <strong>${name}</strong>,</p>
-                    <p class="lts-register-copy" style="color: #666; line-height: 1.6;">Thank you for your interest. We have received your stall registration request for <strong>${currentEventTitle}</strong> and it is currently <strong>under review</strong>.<br /><br />Your exhibitor profile and selected stall details have been recorded for the Luxury Travel Show event. Our team will review your company information, stall preference, and participation details to ensure the best possible event experience.</p>                   
-                    <div class="lts-details-box" style="background: #fdfdff; border: 1px solid #eee; border-radius: 8px; padding: 15px; margin: 30px 0; text-align: left;"> <h3 style="color: #512e8e; font-size: 14px; margin: 0 0 20px 0; letter-spacing: 1.5px; text-transform: uppercase;">Reserved Details</h3>                   
-                      <div style="margin-top: 20px;">
-                      <table class="lts-detail-table" width="100%" style="border-collapse: collapse; margin-bottom: 15px; text-align: left; border: 1px solid #ddd; border-radius: 4px;">
-                        <tr style="background: #f8f9fa;">
-                          <td style="padding: 10px 12px; border-bottom: 1px solid #eee; font-weight: bold; font-size: 12px; color: #000000; text-transform: uppercase;">Exhibitor Company Name:</td>
-                        </tr>
-                        <tr>
-                          <td style="padding: 12px; font-size: 15px;">${company}</td>
-                        </tr>
-                      </table>
-                      <table class="lts-detail-table" width="100%" style="border-collapse: collapse; margin-bottom: 15px; text-align: left; border: 1px solid #ddd; border-radius: 4px;">
-                        <tr style="background: #f8f9fa;">
-                          <td style="padding: 10px 12px; border-bottom: 1px solid #eee; font-weight: bold; font-size: 12px; color: #000000; text-transform: uppercase;">No Of Exhibitors:</td>
-                        </tr>
-                        <tr>
-                          <td style="padding: 12px; font-size: 15px;">${numberOfExhibitors}</td>
-                        </tr>
-                      </table>
-                      <table class="lts-detail-table" width="100%" style="border-collapse: collapse; margin-bottom: 15px; text-align: left; border: 1px solid #ddd; border-radius: 4px;">
-                        <tr style="background: #f8f9fa;">
-                          <td style="padding: 10px 12px; border-bottom: 1px solid #eee; font-weight: bold; font-size: 12px; color: #000000; text-transform: uppercase;">Contact Person Name:</td>
-                        </tr>
-                        <tr>
-                          <td style="padding: 12px; font-size: 15px;">${name}</td>
-                        </tr>
-                      </table>
-                      <table class="lts-detail-table" width="100%" style="border-collapse: collapse; margin-bottom: 15px; text-align: left; border: 1px solid #ddd; border-radius: 4px;">
-                        <tr style="background: #f8f9fa;">
-                          <td style="padding: 10px 12px; border-bottom: 1px solid #eee; font-weight: bold; font-size: 12px; color: #000000; text-transform: uppercase;">Email Address:</td>
-                        </tr>
-                        <tr>
-                          <td style="padding: 12px; font-size: 15px; color: #512e8e;">${email}</td>
-                        </tr>
-                      </table>
-                      <table class="lts-detail-table" width="100%" style="border-collapse: collapse; margin-bottom: 15px; text-align: left; border: 1px solid #ddd; border-radius: 4px;">
-                        <tr style="background: #f8f9fa;">
-                          <td style="padding: 10px 12px; border-bottom: 1px solid #eee; font-weight: bold; font-size: 12px; color: #000000; text-transform: uppercase;">Mobile Number:</td>
-                        </tr>
-                        <tr>
-                          <td style="padding: 12px; font-size: 15px;">${mobile}</td>
-                        </tr>
-                      </table>
-                      <table class="lts-detail-table" width="100%" style="border-collapse: collapse; margin-bottom: 15px; text-align: left; border: 1px solid #ddd; border-radius: 4px;">
-                        <tr style="background: #f8f9fa;">
-                          <td style="padding: 10px 12px; border-bottom: 1px solid #eee; font-weight: bold; font-size: 12px; color: #000000; text-transform: uppercase;">Zone:</td>
-                        </tr>
-                        <tr>
-                          <td style="padding: 12px; font-size: 15px;">${zoneName}</td>
-                        </tr>
-                      </table>
-                      <table class="lts-detail-table" width="100%" style="border-collapse: collapse; margin-bottom: 15px; text-align: left; border: 1px solid #ddd; border-radius: 4px;">
-                        <tr style="background: #f8f9fa;">
-                          <td style="padding: 10px 12px; border-bottom: 1px solid #eee; font-weight: bold; font-size: 12px; color: #000000; text-transform: uppercase;">Stall Number:</td>
-                        </tr>
-                        <tr>
-                          <td style="padding: 12px; font-size: 15px;">${stallNo}</td>
-                        </tr>
-                      </table>
-                      <table class="lts-detail-table" width="100%" style="border-collapse: collapse; margin-bottom: 15px; text-align: left; border: 1px solid #ddd; border-radius: 4px;">
-                        <tr style="background: #f8f9fa;">
-                          <td style="padding: 10px 12px; border-bottom: 1px solid #eee; font-weight: bold; font-size: 12px; color: #000000; text-transform: uppercase;">GST Number:</td>
-                        </tr>
-                        <tr>
-                          <td style="padding: 12px; font-size: 15px;">${gst || 'N/A'}</td>
-                        </tr>
-                      </table>
-                      <table class="lts-detail-table" width="100%" style="border-collapse: collapse; margin-bottom: 15px; text-align: left; border: 1px solid #ddd; border-radius: 4px;">
-                        <tr style="background: #f8f9fa;">
-                          <td style="padding: 10px 12px; border-bottom: 1px solid #eee; font-weight: bold; font-size: 12px; color: #000000; text-transform: uppercase;">Country:</td>
-                        </tr>
-                        <tr>
-                          <td style="padding: 12px; font-size: 15px;">${country}</td>
-                        </tr>
-                      </table>
-                      <table class="lts-detail-table" width="100%" style="border-collapse: collapse; margin-bottom: 15px; text-align: left; border: 1px solid #ddd; border-radius: 4px;">
-                        <tr style="background: #f8f9fa;">
-                          <td style="padding: 10px 12px; border-bottom: 1px solid #eee; font-weight: bold; font-size: 12px; color: #000000; text-transform: uppercase;">State:</td>
-                        </tr>
-                        <tr>
-                          <td style="padding: 12px; font-size: 15px;">${state}</td>
-                        </tr>
-                      </table>
-                      <table class="lts-detail-table" width="100%" style="border-collapse: collapse; margin-bottom: 15px; text-align: left; border: 1px solid #ddd; border-radius: 4px;">
-                        <tr style="background: #f8f9fa;">
-                          <td style="padding: 10px 12px; border-bottom: 1px solid #eee; font-weight: bold; font-size: 12px; color: #000000; text-transform: uppercase;">City:</td>
-                        </tr>
-                        <tr>
-                          <td style="padding: 12px; font-size: 15px;">${city}</td>
-                        </tr>
-                      </table>
-                      <table class="lts-detail-table" width="100%" style="border-collapse: collapse; margin-bottom: 15px; text-align: left; border: 1px solid #ddd; border-radius: 4px;">
-                        <tr style="background: #f8f9fa;">
-                          <td style="padding: 10px 12px; border-bottom: 1px solid #eee; font-weight: bold; font-size: 12px; color: #000000; text-transform: uppercase;">Pincode:</td>
-                        </tr>
-                        <tr>
-                          <td style="padding: 12px; font-size: 15px;">${pincode || 'N/A'}</td>
-                        </tr>
-                      </table>
-                      <table class="lts-detail-table" width="100%" style="border-collapse: collapse; margin-bottom: 15px; text-align: left; border: 1px solid #ddd; border-radius: 4px;">
-                        <tr style="background: #f8f9fa;">
-                          <td style="padding: 10px 12px; border-bottom: 1px solid #eee; font-weight: bold; font-size: 12px; color: #000000; text-transform: uppercase;">Address Line 1:</td>
-                        </tr>
-                        <tr>
-                          <td style="padding: 12px; font-size: 15px;">${address1 || 'N/A'}</td>
-                        </tr>
-                      </table>
-                      <table width="100%" style="border-collapse: collapse; margin-bottom: 15px; text-align: left; border: 1px solid #ddd; border-radius: 4px;">
-                        <tr style="background: #f8f9fa;">
-                          <td style="padding: 10px 12px; border-bottom: 1px solid #eee; font-weight: bold; font-size: 12px; color: #000000; text-transform: uppercase;">Address Line 2 (Optional):</td>
-                        </tr>
-                        <tr>
-                          <td style="padding: 12px; font-size: 15px;">${address2 || 'N/A'}</td>
-                        </tr>
-                      </table>
-                    </div>
-                    </div>                   
-                    <p class="lts-register-copy" style="color: #222; font-size: 14px; line-height: 1.6;">Our coordination team will verify the details and contact you shortly for the next steps.</p>
-                  </div>
-                  <div style="background: #f4f4f4; padding: 20px; text-align: center; font-size: 12px; color: #999;">
-                    &copy; ${new Date().getFullYear()} ${currentEventTitle} 
-                  </div>
-                </div>
-              </div>
-              `,
-                attachments: withEmailLogo()
+                html: userHtml,
+                attachments: attachments
               });
               console.log(`\x1b[32m  ✅ SUCCESS:\x1b[0m Exhibitor registration mail sent to ${email}`);
+
               console.log(`\x1b[36m[📧 EMAIL TRIGGER]\x1b[0m Exhibitor Registration - Admin Notification`);
               console.log(`  \x1b[33mFROM:\x1b[0m ${process.env.EMAIL_USER}`);
               console.log(`  \x1b[33mTO  :\x1b[0m ${process.env.ADMIN_EMAIL}`);
@@ -1270,151 +1361,8 @@ app.post("/api/register", async (req, res) => {
                 from: process.env.EMAIL_USER,
                 to: process.env.ADMIN_EMAIL,
                 subject: `New Registration - ${currentEventTitle}`,
-                html: `
-                <style>
-                  @media only screen and (max-width: 600px) {
-                    .exhibitor-admin-shell { padding: 15px 5px !important; }
-                    .exhibitor-admin-card { width: 100% !important; max-width: 100% !important; border-radius: 0 !important; }
-                    .exhibitor-admin-header { padding: 20px 10px !important; }
-                    .exhibitor-admin-body { padding: 20px 10px !important; }
-                    .exhibitor-admin-body table td { font-size: 13px !important; padding: 8px !important; }
-                  }
-                  @media only screen and (min-width: 601px) and (max-width: 900px) {
-                    .exhibitor-admin-card { max-width: 500px !important; }
-                    .exhibitor-admin-body { padding: 25px 20px !important; }
-                  }
-                </style>
-                <div class="exhibitor-admin-shell" style="font-family: Arial, sans-serif; background-color: #f4f4f7; padding: 40px 10px; color: #1a1a1a;">
-                  <div class="exhibitor-admin-card" style="max-width: 550px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.05); border: 1px solid #e0e0e0;">
-                    <div class="exhibitor-admin-header" style="background-color: #512e8e; padding: 30px; text-align: center;">
-                      ${emailLogoHtml("Admin Notification", "color: #ffffff; margin: 0; font-size: 22px; font-weight: bold; line-height: 1.2;")}
-                    </div>
-                    <div class="exhibitor-admin-body" style="padding: 30px;">
-                      <p style="font-size: 16px; color: #444; text-align: center;">
-                        New Registration Inquiry
-                        <br /><br />
-                        <strong>${currentEventTitle}</strong>:
-                      </p>
-                      <table width="100%" style="border-collapse: collapse; margin-bottom: 15px; text-align: left; border: 1px solid #ddd; border-radius: 4px;">
-                        <tr style="background: #f8f9fa;">
-                          <td style="padding: 10px 12px; border-bottom: 1px solid #eee; font-weight: bold; font-size: 12px; color: #000000; text-transform: uppercase;">Exhibitor Company Name:</td>
-                        </tr>
-                        <tr>
-                          <td style="padding: 12px; font-size: 15px;">${company}</td>
-                        </tr>
-                      </table>
-                      <table width="100%" style="border-collapse: collapse; margin-bottom: 15px; text-align: left; border: 1px solid #ddd; border-radius: 4px;">
-                        <tr style="background: #f8f9fa;">
-                          <td style="padding: 10px 12px; border-bottom: 1px solid #eee; font-weight: bold; font-size: 12px; color: #000000; text-transform: uppercase;">Number Of Exhibitors:</td>
-                        </tr>
-                        <tr>
-                          <td style="padding: 12px; font-size: 15px;">${numberOfExhibitors}</td>
-                        </tr>
-                      </table>
-                      <table width="100%" style="border-collapse: collapse; margin-bottom: 15px; text-align: left; border: 1px solid #ddd; border-radius: 4px;">
-                        <tr style="background: #f8f9fa;">
-                          <td style="padding: 10px 12px; border-bottom: 1px solid #eee; font-weight: bold; font-size: 12px; color: #000000; text-transform: uppercase;">Contact Person Name:</td>
-                        </tr>
-                        <tr>
-                          <td style="padding: 12px; font-size: 15px;">${name}</td>
-                        </tr>
-                      </table>
-                      <table width="100%" style="border-collapse: collapse; margin-bottom: 15px; text-align: left; border: 1px solid #ddd; border-radius: 4px;">
-                        <tr style="background: #f8f9fa;">
-                          <td style="padding: 10px 12px; border-bottom: 1px solid #eee; font-weight: bold; font-size: 12px; color: #000000; text-transform: uppercase;">Email Address:</td>
-                        </tr>
-                        <tr>
-                          <td style="padding: 12px; font-size: 15px; color: #512e8e;">${email}</td>
-                        </tr>
-                      </table>
-                      <table width="100%" style="border-collapse: collapse; margin-bottom: 15px; text-align: left; border: 1px solid #ddd; border-radius: 4px;">
-                        <tr style="background: #f8f9fa;">
-                          <td style="padding: 10px 12px; border-bottom: 1px solid #eee; font-weight: bold; font-size: 12px; color: #000000; text-transform: uppercase;">Mobile Number:</td>
-                        </tr>
-                        <tr>
-                          <td style="padding: 12px; font-size: 15px;">${mobile}</td>
-                        </tr>
-                      </table>
-                      <table width="100%" style="border-collapse: collapse; margin-bottom: 15px; text-align: left; border: 1px solid #ddd; border-radius: 4px;">
-                        <tr style="background: #f8f9fa;">
-                          <td style="padding: 10px 12px; border-bottom: 1px solid #eee; font-weight: bold; font-size: 12px; color: #000000; text-transform: uppercase;">Zone:</td>
-                        </tr>
-                        <tr>
-                          <td style="padding: 12px; font-size: 15px;">${zoneName}</td>
-                        </tr>
-                      </table>
-                      <table width="100%" style="border-collapse: collapse; margin-bottom: 15px; text-align: left; border: 1px solid #ddd; border-radius: 4px;">
-                        <tr style="background: #f8f9fa;">
-                          <td style="padding: 10px 12px; border-bottom: 1px solid #eee; font-weight: bold; font-size: 12px; color: #000000; text-transform: uppercase;">Stall Number:</td>
-                        </tr>
-                        <tr>
-                          <td style="padding: 12px; font-size: 15px;">${stallNo}</td>
-                        </tr>
-                      </table>
-                      <table width="100%" style="border-collapse: collapse; margin-bottom: 15px; text-align: left; border: 1px solid #ddd; border-radius: 4px;">
-                        <tr style="background: #f8f9fa;">
-                          <td style="padding: 10px 12px; border-bottom: 1px solid #eee; font-weight: bold; font-size: 12px; color: #000000; text-transform: uppercase;">GST Number:</td>
-                        </tr>
-                        <tr>
-                          <td style="padding: 12px; font-size: 15px;">${gst || 'N/A'}</td>
-                        </tr>
-                      </table>
-                      <table width="100%" style="border-collapse: collapse; margin-bottom: 15px; text-align: left; border: 1px solid #ddd; border-radius: 4px;">
-                        <tr style="background: #f8f9fa;">
-                          <td style="padding: 10px 12px; border-bottom: 1px solid #eee; font-weight: bold; font-size: 12px; color: #000000; text-transform: uppercase;">Country:</td>
-                        </tr>
-                        <tr>
-                          <td style="padding: 12px; font-size: 15px;">${country}</td>
-                        </tr>
-                      </table>
-                      <table width="100%" style="border-collapse: collapse; margin-bottom: 15px; text-align: left; border: 1px solid #ddd; border-radius: 4px;">
-                        <tr style="background: #f8f9fa;">
-                          <td style="padding: 10px 12px; border-bottom: 1px solid #eee; font-weight: bold; font-size: 12px; color: #000000; text-transform: uppercase;">State:</td>
-                        </tr>
-                        <tr>
-                          <td style="padding: 12px; font-size: 15px;">${state}</td>
-                        </tr>
-                      </table>
-                      <table width="100%" style="border-collapse: collapse; margin-bottom: 15px; text-align: left; border: 1px solid #ddd; border-radius: 4px;">
-                        <tr style="background: #f8f9fa;">
-                          <td style="padding: 10px 12px; border-bottom: 1px solid #eee; font-weight: bold; font-size: 12px; color: #000000; text-transform: uppercase;">City:</td>
-                        </tr>
-                        <tr>
-                          <td style="padding: 12px; font-size: 15px;">${city}</td>
-                        </tr>
-                      </table>
-                      <table width="100%" style="border-collapse: collapse; margin-bottom: 15px; text-align: left; border: 1px solid #ddd; border-radius: 4px;">
-                        <tr style="background: #f8f9fa;">
-                          <td style="padding: 10px 12px; border-bottom: 1px solid #eee; font-weight: bold; font-size: 12px; color: #000000; text-transform: uppercase;">Pincode:</td>
-                        </tr>
-                        <tr>
-                          <td style="padding: 12px; font-size: 15px;">${pincode || 'N/A'}</td>
-                        </tr>
-                      </table>
-                      <table width="100%" style="border-collapse: collapse; margin-bottom: 15px; text-align: left; border: 1px solid #ddd; border-radius: 4px;">
-                        <tr style="background: #f8f9fa;">
-                          <td style="padding: 10px 12px; border-bottom: 1px solid #eee; font-weight: bold; font-size: 12px; color: #000000; text-transform: uppercase;">Address Line 1:</td>
-                        </tr>
-                        <tr>
-                          <td style="padding: 12px; font-size: 15px;">${address1 || 'N/A'}</td>
-                        </tr>
-                      </table>
-                      <table width="100%" style="border-collapse: collapse; margin-bottom: 15px; text-align: left; border: 1px solid #ddd; border-radius: 4px;">
-                        <tr style="background: #f8f9fa;">
-                          <td style="padding: 10px 12px; border-bottom: 1px solid #eee; font-weight: bold; font-size: 12px; color: #000000; text-transform: uppercase;">Address Line 2: (Optional)</td>
-                        </tr>
-                        <tr>
-                          <td style="padding: 12px; font-size: 15px;">${address2 || 'N/A'}</td>
-                        </tr>
-                      </table>
-                    </div>
-                    <div style="background: #f9f9f9; padding: 20px; text-align: center; border-top: 1px solid #eeeeee;">
-                      <p style="margin: 0; font-size: 11px; color: #999;">Automated System | ${new Date().toLocaleString()}</p>
-                    </div>
-                  </div>
-                </div>
-              `,
-                attachments: withEmailLogo()
+                html: adminHtml,
+                attachments: attachments
               });
               res.json({ message: "Registration successful & mail sent" });
             } catch (mailError) {
@@ -2343,13 +2291,8 @@ app.get('/api/contact', (req, res) => {
 });
 
 app.post('/api/visitors/register', visitorUpload.single("file"), async (req, res) => {
-<<<<<<< HEAD
   const { firstName, lastName, companyName, mobileNumber, designation, email, country, state, city, pincode, address1, address2, recaptchaToken } = req.body;
   const filePath = req.file ? path.relative(__dirname, req.file.path).replace(/\\/g, "/") : null;
-=======
-  const { firstName, lastName, companyName, mobileNumber, designation, email, visitorType, country, state, city, pincode, address1, address2, recaptchaToken } = req.body;
-  const filePath = req.file ? req.file.path : null;
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
   const fileName = req.file ? req.file.filename : null;
 
   if (!recaptchaToken) {
@@ -2396,15 +2339,9 @@ app.post('/api/visitors/register', visitorUpload.single("file"), async (req, res
           error: "Mobile Number is already registered"
         });
       }
-<<<<<<< HEAD
       const sql = `INSERT INTO visitors (first_name, last_name, email, mobile_number, company_name, designation, country, state, city, pincode, address1, address2, file_path, file_name) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
       db.query(sql, [firstName, lastName, email, mobileNumber, companyName, designation, country, state, city, pincode, address1, address2, filePath, fileName || null],
-=======
-      const sql = `INSERT INTO visitors (first_name, last_name, email, mobile_number, company_name, designation, visitor_type, country, state, city, pincode, address1, address2, file_path, file_name) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-      db.query(sql, [firstName, lastName, email, mobileNumber, companyName, designation, visitorType, country, state, city, pincode, address1, address2, filePath, fileName || null],
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
         (err, result) => {
           if (err) return res.status(500).json({ error: err.message });
           const visitor = {
@@ -2414,10 +2351,6 @@ app.post('/api/visitors/register', visitorUpload.single("file"), async (req, res
             email: email,
             mobile_number: mobileNumber,
             designation: designation,
-<<<<<<< HEAD
-=======
-            visitor_type: visitorType,
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
             country: country,
             state: state,
             city: city,
@@ -2860,13 +2793,6 @@ app.get("/qr-scanner", (req, res) => {
       </div>
       <div class="stats-container">
         <div class="stat-card">
-<<<<<<< HEAD
-=======
-          <div class="stat-label">Registrations</div>
-          <div id="totalRegistrations" class="stat-value">0</div>
-        </div>
-        <div class="stat-card">
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
           <div class="stat-label">Checked-in</div>
           <div id="totalScanned" class="stat-value" style="color: #27ae60;">0</div>
         </div>
@@ -2920,10 +2846,7 @@ app.get("/qr-scanner", (req, res) => {
       <script>
         let lastScan = "";
         let lastScanTime = 0;
-<<<<<<< HEAD
         let lastScannedVisitorId = null;
-=======
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
         ["click", "touchstart"].forEach(event => {
           document.body.addEventListener(event, () => {
             const success = document.getElementById("successSound");
@@ -3007,7 +2930,6 @@ app.get("/qr-scanner", (req, res) => {
           document.getElementById("detailsModal").style.display = "flex";
         }
         function closeModal() {
-<<<<<<< HEAD
           if (lastScannedVisitorId) {
             fetch(window.location.origin + "/api/send-visit-thankyou", {
               method: "POST",
@@ -3016,8 +2938,6 @@ app.get("/qr-scanner", (req, res) => {
             }).catch(err => console.error("Error sending thank you email:", err));
             lastScannedVisitorId = null;
           }
-=======
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
           document.getElementById("detailsModal").style.display = "none";
           goToInitialPage();
         }
@@ -3068,10 +2988,7 @@ app.get("/qr-scanner", (req, res) => {
           .then(res => res.json())
           .then(data => {
             if (data.message.startsWith("Visitor Name")) {
-<<<<<<< HEAD
               lastScannedVisitorId = data.visitorId;
-=======
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
               showSuccess(data.message);
               loadStats();
             }
@@ -3088,7 +3005,6 @@ app.get("/qr-scanner", (req, res) => {
           fetch(window.location.origin + "/api/visitor-stats")
             .then(res => res.json())
             .then(data => {
-<<<<<<< HEAD
               const totalScannedEl = document.getElementById("totalScanned");
               if (totalScannedEl) {
                 totalScannedEl.innerText = data.totalScanned || 0;
@@ -3097,10 +3013,6 @@ app.get("/qr-scanner", (req, res) => {
               if (totalRegEl) {
                 totalRegEl.innerText = data.totalRegistrations || 0;
               }
-=======
-              document.getElementById("totalRegistrations").innerText = data.totalRegistrations || 0;
-              document.getElementById("totalScanned").innerText = data.totalScanned || 0;
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
             })
             .catch(() => {});
         }
@@ -3233,7 +3145,6 @@ app.post("/api/scan-qr", (req, res) => {
         message: `Visitor Name: ${visitor.first_name} ${visitor.last_name}
         Company Name: ${visitor.company_name}
         Mobile Number: ${visitor.mobile_number}
-<<<<<<< HEAD
         Email Address: ${visitor.email}`,
         visitorId: visitor.id
       });
@@ -3271,9 +3182,6 @@ app.post("/api/send-visit-thankyou", (req, res) => {
         }
         console.log(`[📧 EMAIL TRIGGER] Sent Visit Thank You confirmation to ${visitor.email}`);
         return res.json({ message: "Thank you email sent successfully" });
-=======
-        Email Address: ${visitor.email}`
->>>>>>> d55a94553745be2f08e26fa4ad92b7873675eb61
       });
     });
   });
