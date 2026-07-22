@@ -164,6 +164,16 @@ const db = mysql.createConnection({
   database: process.env.DB_NAME
 });
 
+db.query("SHOW COLUMNS FROM registrations LIKE 'comments'", (err, res) => {
+  if (!err && res && res.length === 0) {
+    db.query("ALTER TABLE registrations ADD COLUMN comments TEXT", (err2) => {
+      if (err2) console.error("Error adding comments column to registrations:", err2);
+      else console.log("Added comments column to registrations table");
+    });
+  }
+});
+
+
 // MULTER CONFIG
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -460,7 +470,7 @@ const buildVisitorEmailHtml = (visitor, isForAdmin, status = "Pending", qrCid = 
                         &bull;
                       </td>
                       <td valign="top" width="150" style="font-family: Arial, sans-serif; font-size: 14px; color: #111111; font-weight: bold; line-height: 1.6; padding: 4px 0; width: 150px;">
-                        Comments:
+                        Message:
                       </td>
                       <td valign="top" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0;">
                         ${notes}
@@ -604,24 +614,24 @@ const buildExhibitorEmailHtml = (exhibitor, isForAdmin, status = "Pending", note
 
   if (isForAdmin) {
     if (lStatus === "approved" || lStatus === "approval" || lStatus === "confirmed") {
-      congratTitle = "Visitor Registration - Approved";
+      congratTitle = "Exhibitor Registration - Approved";
       bodyParagraph = `We are pleased to inform you that the registration submission for <strong style="color: #593983;">${name}</strong> from <strong>${company}</strong> has been approved.`;
     } else if (lStatus === "rejected" || lStatus === "rejection") {
-      congratTitle = "Visitor Registration - Rejected";
+      congratTitle = "Exhibitor Registration - Rejected";
       bodyParagraph = `Please note that the registration submission for <strong style="color: #593983;">${name}</strong> from <strong>${company}</strong> has been rejected.`;
     } else {
-      congratTitle = "Congratulations! You've Received a New Exhibitor Registration!";
+      congratTitle = "Congratulations! You've Received a Exhibitor Registration!";
       bodyParagraph = `We have received a registration submission from <strong>${company}</strong> for <strong style="color: #593983;">LTS 2026</strong>. The registration is currently under review by the organizing team. Further communication and confirmation will be sent directly to the registered email address upon completion of the evaluation process.`;
     }
   } else {
     if (lStatus === "approved" || lStatus === "approval" || lStatus === "confirmed") {
-      congratTitle = "Congratulations! Your Registration has been Approved!";
+      congratTitle = "Congratulations! Your Exhibitor Registration has been Approved!";
       bodyParagraph = `We are pleased to inform you that your registration submission for <strong style="color: #593983;">LTS 2026</strong> has been successfully reviewed and approved by the organizing team. Your participation has been confirmed, and we look forward to welcoming you to the LTS event on 01st August 2026.`;
     } else if (lStatus === "rejected" || lStatus === "rejection") {
       congratTitle = "Registration Status Update";
       bodyParagraph = `Thank you for your interest in participating in <strong style="color: #593983;">LTS 2026</strong>. After careful review by the organizing team, we regret to inform you that your registration submission has not been approved at this time. We appreciate the effort taken to submit your application and thank you for your interest in the event. For any further clarification, please feel free to contact the organizing team through the official communication channels.`;
     } else {
-      congratTitle = "Congratulations! Your Registration has been Received!";
+      congratTitle = "Congratulations! Your Exhibitor Registration has been Received!";
       bodyParagraph = `We have received your registration submission for <strong style="color: #593983;">LTS 2026</strong>. The registration is currently under review by the organizing team. Further communication and confirmation will be sent directly your registered email.`;
     }
   }
@@ -743,6 +753,19 @@ const buildExhibitorEmailHtml = (exhibitor, isForAdmin, status = "Pending", note
                         ${statusTextHtml}
                       </td>
                     </tr>
+                    ${notes ? `
+                    <tr>
+                      <td valign="top" width="15" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0; width: 15px;">
+                        &bull;
+                      </td>
+                      <td valign="top" width="160" style="font-family: Arial, sans-serif; font-size: 14px; color: #111111; font-weight: bold; line-height: 1.6; padding: 4px 0; width: 160px;">
+                        Comments:
+                      </td>
+                      <td valign="top" style="font-family: Arial, sans-serif; font-size: 14px; color: #d2232a; font-weight: bold; line-height: 1.6; padding: 4px 0;">
+                        ${notes}
+                      </td>
+                    </tr>
+                    ` : ""}
                     ${isForAdmin ? `
                     <tr>
                       <td valign="top" width="15" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0; width: 15px;">
@@ -816,7 +839,7 @@ const buildExhibitorEmailHtml = (exhibitor, isForAdmin, status = "Pending", note
                         &bull;
                       </td>
                       <td valign="top" width="160" style="font-family: Arial, sans-serif; font-size: 14px; color: #111111; font-weight: bold; line-height: 1.6; padding: 4px 0; width: 160px;">
-                        Comments:
+                        Message:
                       </td>
                       <td valign="top" style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; line-height: 1.6; padding: 4px 0;">
                         ${notes}
@@ -1832,7 +1855,7 @@ app.get("/api/generate-qr/:id", (req, res) => {
     LEFT JOIN stalls s ON r.stall = s.id
     WHERE r.id = ?
   `;
-  db.query(sql, [id], async (err, result) => {
+  db.query(sql, [id], (err, result) => {
     if (err || result.length === 0) {
       return res.status(500).json({ error: "Data not found" });
     }
@@ -1840,32 +1863,96 @@ app.get("/api/generate-qr/:id", (req, res) => {
     if (user.status !== "Confirmed") {
       return res.status(400).json({ error: "Not confirmed yet" });
     }
-    const qrData = `
-      Exhibitor ID: ${user.id}
-      Name: ${user.name}
-      Company: ${user.company}
-      Zone: ${user.zone_name}
-      Stall: ${user.stall_no}
-    `;
-    const fileName = `qr_${user.id}.png`;
-    const filePath = path.join(__dirname, "uploads/qrcodes", fileName);
-    try {
-      if (!fs.existsSync("uploads/qrcodes")) {
-        fs.mkdirSync("uploads/qrcodes", { recursive: true });
+
+    db.query(
+      "SELECT * FROM exhibitors WHERE registration_id = ?",
+      [id],
+      async (errSub, subExhibitors) => {
+        if (errSub) {
+          console.error(errSub);
+          subExhibitors = [];
+        }
+
+        const filteredSubs = (subExhibitors || []).filter((sub) => {
+          if (!sub.name || !sub.name.trim()) return false;
+          const isUserDup =
+            sub.name.trim().toLowerCase() === (user.name || "").trim().toLowerCase() &&
+            sub.mobile.trim() === (user.mobile || "").trim();
+          return !isUserDup;
+        });
+
+        const allExhibitors = [
+          {
+            id: `main_${user.id}`,
+            exhibitorNo: 1,
+            isPrimary: true,
+            name: user.name || "",
+            mobile: user.mobile || "",
+            email: user.email || "",
+            company: user.company || "",
+            zone_name: user.zone_name || "",
+            stall_no: user.stall_no || ""
+          },
+          ...filteredSubs.map((sub, index) => ({
+            id: `sub_${sub.id || index}`,
+            exhibitorNo: index + 2,
+            isPrimary: false,
+            name: sub.name || "",
+            mobile: sub.mobile || "",
+            email: sub.email || user.email || "",
+            company: sub.company || user.company || "",
+            zone_name: user.zone_name || "",
+            stall_no: user.stall_no || ""
+          }))
+        ];
+
+        try {
+          if (!fs.existsSync("uploads/qrcodes")) {
+            fs.mkdirSync("uploads/qrcodes", { recursive: true });
+          }
+
+          const exhibitorQrList = [];
+          for (let i = 0; i < allExhibitors.length; i++) {
+            const ex = allExhibitors[i];
+            const qrData = `
+Exhibitor ID: ${user.id}
+Name: ${ex.name}
+Company: ${ex.company}
+Zone: ${ex.zone_name}
+Stall: ${ex.stall_no}
+            `.trim();
+
+            const fileName = ex.isPrimary
+              ? `qr_${user.id}_main.png`
+              : `qr_${user.id}_sub_${i}.png`;
+            const filePath = path.join(__dirname, "uploads/qrcodes", fileName);
+
+            await QRCode.toFile(filePath, qrData);
+
+            exhibitorQrList.push({
+              ...ex,
+              fileName: fileName,
+              file: fileName
+            });
+          }
+
+          const mainFileName = exhibitorQrList[0]?.fileName || `qr_${user.id}.png`;
+          db.query(
+            "UPDATE registrations SET qr_code = ? WHERE id = ?",
+            [mainFileName, id]
+          );
+
+          res.json({
+            message: "QR Generated",
+            file: mainFileName,
+            exhibitors: exhibitorQrList
+          });
+        } catch (error) {
+          console.error(error);
+          res.status(500).json({ error: "QR generation failed" });
+        }
       }
-      await QRCode.toFile(filePath, qrData);
-      db.query(
-        "UPDATE registrations SET qr_code = ? WHERE id = ?",
-        [fileName, id]
-      );
-      res.json({
-        message: "QR Generated",
-        file: fileName
-      });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: "QR generation failed" });
-    }
+    );
   });
 });
 
@@ -1883,9 +1970,10 @@ app.put("/api/reject/:id", (req, res) => {
     if (err) return res.status(500).json(err);
     const user = result[0];
     if (!user) return res.status(404).json({ message: "User not found" });
-    const updateSql = "UPDATE registrations SET status='Rejected', waiting_list=0 WHERE id=?";
-    db.query(updateSql, [id], (err2) => {
+    const updateSql = "UPDATE registrations SET status='Rejected', comments=?, waiting_list=0 WHERE id=?";
+    db.query(updateSql, [reason || "", id], (err2) => {
       if (err2) return res.status(500).json(err2);
+      user.comments = reason || "";
       db.query("SELECT setting_value FROM exhibitor_settings WHERE setting_key = 'event_title'", async (errS, sRes) => {
         const currentEventTitle = sRes && sRes[0] ? sRes[0].setting_value : "Luxury Travel Expo";
         try {
@@ -1917,11 +2005,11 @@ app.put("/api/reject/:id", (req, res) => {
           console.log(`\x1b[36m[📧 EMAIL TRIGGER]\x1b[0m Exhibitor Rejection - Admin Notification`);
           console.log(`  \x1b[33mFROM:\x1b[0m ${process.env.EMAIL_USER}`);
           console.log(`  \x1b[33mTO  :\x1b[0m ${adminTargetEmail}`);
-          console.log(`  \x1b[33mSUBJ:\x1b[0m Visitor Registration - Rejected`);
+          console.log(`  \x1b[33mSUBJ:\x1b[0m Exhibitor Registration - Rejected`);
           transporter.sendMail({
             from: process.env.EMAIL_USER,
             to: adminTargetEmail,
-            subject: `Visitor Registration - Rejected`,
+            subject: `Exhibitor Registration - Rejected`,
             html: adminEmailHtml,
             attachments: getEmailAttachments()
           }, (errAdmin) => {
@@ -2346,7 +2434,9 @@ app.put('/api/visitors/status/:id', (req, res) => {
         let qrFileName = null;
         let qrFilePath = null;
         if (status === "approved") {
-          const qrData = `https://luxurytravelshow.in/api/scan-qr/${visitor.id}`;
+          // const qrData = `https://luxurytravelshow.in/api/scan-qr/${visitor.id}`;
+          const baseUrl = process.env.APP_URL || "http://localhost:5000";
+          const qrData = `${baseUrl}/api/scan-qr/${visitor.id}`;
           qrFileName = `visitor_${visitor.id}.png`;
           qrFilePath = path.join(__dirname, "qrcodes", qrFileName);
           if (!fs.existsSync(path.join(__dirname, "qrcodes"))) {

@@ -26,9 +26,14 @@ function RegistrationList() {
   const [modalType, setModalType] = useState("");
   const [selected, setSelected] = useState(null);
   const [rejectReason, setRejectReason] = useState("");
-  const [qrName, setQrName] = useState("");
+  const [qrExhibitors, setQrExhibitors] = useState([]);
+  const [activePersonIndex, setActivePersonIndex] = useState(0);
   const [qrModal, setQrModal] = useState(false);
-  const [qrImage, setQrImage] = useState("");
+  const [isPrintingActive, setIsPrintingActive] = useState(false);
+  const [showStartPrintModal, setShowStartPrintModal] = useState(false);
+  const [showStopPrintModal, setShowStopPrintModal] = useState(false);
+  const [selectedCompanyFilter, setSelectedCompanyFilter] = useState("all");
+  const batchPrintWindowRef = React.useRef(null);
   const [isEditMode, setIsEditMode] = useState(false);
   const [exhibitors, setExhibitors] = useState([{ name: "", mobile: "", email: "", company: "" }]);
   const [exhibitorErrors, setExhibitorErrors] = useState([]);
@@ -124,7 +129,7 @@ function RegistrationList() {
         if (res.data?.length > 0) {
           setExhibitors(res.data);
         } else {
-          setExhibitors([{ name: "", mobile: "", email: "", company: "" }]);
+          setExhibitors([{ name: item?.name || "", mobile: item?.mobile || "", email: item?.email || "", company: item?.company || "" }]);
         }
       })
       .catch(() => {
@@ -356,14 +361,21 @@ function RegistrationList() {
       .finally(() => setLoadingAction(""));
   };
 
-  const loadExhibitorsForEdit = async (registrationId) => {
+  const loadExhibitorsForEdit = async (item) => {
+    const regId = typeof item === "object" ? item.id : item;
+    const defaultComp = typeof item === "object" ? item.company : "";
+    const defaultName = typeof item === "object" ? item.name : "";
+    const defaultMob = typeof item === "object" ? item.mobile : "";
+    const defaultEmail = typeof item === "object" ? item.email : "";
     try {
       const res = await axios.get(
-        `${API_BASE_URL}/api/exhibitors/${registrationId}`
+        `${API_BASE_URL}/api/exhibitors/${regId}`
       );
-      if (res.data) {
-        setExhibitors(res.data.length ? res.data : [
-          { name: "", mobile: "", email: "", company: "" }
+      if (res.data && res.data.length > 0) {
+        setExhibitors(res.data);
+      } else {
+        setExhibitors([
+          { name: defaultName, mobile: defaultMob, email: defaultEmail, company: defaultComp }
         ]);
       }
     } catch (err) {
@@ -456,14 +468,33 @@ function RegistrationList() {
 
   const generateQR = async (item) => {
     try {
+      setActivePersonIndex(0);
       const res = await axios.get(
         `${API_BASE_URL}/api/generate-qr/${item.id}`
       );
-      const fileName = res.data.file;
-      const url = `${API_BASE_URL}/qrcodes/${fileName}`;
-      setQrImage(url);
-      setQrName(item.name);
       setSelected(item);
+      if (res.data.exhibitors && res.data.exhibitors.length > 0) {
+        setQrExhibitors(
+          res.data.exhibitors.map((ex) => ({
+            ...ex,
+            qrUrl: `${API_BASE_URL}/qrcodes/${ex.fileName || ex.file}`
+          }))
+        );
+      } else {
+        const fileName = res.data.file;
+        const url = `${API_BASE_URL}/qrcodes/${fileName}`;
+        setQrExhibitors([
+          {
+            id: `main_${item.id}`,
+            exhibitorNo: 1,
+            isPrimary: true,
+            name: item.name,
+            mobile: item.mobile,
+            company: item.company,
+            qrUrl: url
+          }
+        ]);
+      }
       setQrModal(true);
     } catch (err) {
       console.error(err);
@@ -471,46 +502,75 @@ function RegistrationList() {
     }
   };
 
-  const printQR = () => {
+  const printQR = (exhibitor) => {
+    const targetEx = exhibitor || qrExhibitors[0];
+    if (!targetEx) return;
     const printWindow = window.open("", "_blank");
     printWindow.document.write(`
       <html>
         <head>
-          <title>Print QR Code</title>
+          <title>Print QR Code - ${targetEx.name || "Exhibitor"}</title>
           <style>
+            @page {
+              margin: 0;
+            }
             body {
               margin: 0;
+              padding: 20px;
               display: flex;
               justify-content: center;
               align-items: center;
               height: 100vh;
               flex-direction: column;
-              font-family: Arial;
+              font-family: Arial, sans-serif;
+              box-sizing: border-box;
+            }
+            .card {
+              border: none;
+              padding: 10px;
+              text-align: center;
+              width: 320px;
+              background: #ffffff;
             }
             img {
-              width: 250px;
-              height: 250px;
+              width: 220px;
+              height: 220px;
+              margin-bottom: 8px;
             }
-            .name {
-              font-size: 22px;
-              font-weight: bold;
-              color: #1e293b;
-              margin-top: 15px;
+            .info-box {
+              background: transparent;
+              padding: 5px 0;
+              border: none;
+              text-align: center;
             }
-            .info {
-              font-size: 16px;
-              font-weight: bold;
-              color: #1e293b;
-              margin-top: 6px;
+            .val-name {
+              font-size: 18px;
+              font-weight: 700;
+              color: #0f172a;
+              margin-bottom: 4px;
+            }
+            .val-mobile {
+              font-size: 15px;
+              font-weight: 600;
+              color: #0f172a;
+              margin-bottom: 6px;
+            }
+            .val-company {
+              font-size: 17px;
+              font-weight: 800;
+              color: #0f172a;
             }
           </style>
         </head>
         <body>
-          <img src="${qrImage}" />
-          <div class="name">${qrName || "—"}</div>
-          <div class="info">${selected?.mobile || "—"}</div>
-          <div class="info">${selected?.email || "—"}</div>
-          <div class="info">${selected?.company || "—"}</div>
+          <div class="card">
+            <img src="${targetEx.qrUrl}" />
+            <div class="info-box">
+              <div class="val-name">${targetEx.name || "—"}</div>
+              <div class="val-mobile">${targetEx.mobile || "—"}</div>
+              <div class="val-company">${targetEx.company || "—"}</div>
+            </div>
+          </div>
           <script>
             window.onload = function() {
               window.print();
@@ -523,31 +583,240 @@ function RegistrationList() {
     printWindow.document.close();
   };
 
-  const downloadQR = async () => {
+  const downloadQR = async (exhibitor) => {
+    const targetEx = exhibitor || qrExhibitors[0];
+    if (!targetEx) return;
     const img = new Image();
     img.crossOrigin = "anonymous";
-    img.src = qrImage;
+    img.src = targetEx.qrUrl;
     img.onload = () => {
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
-      canvas.width = 320;
-      canvas.height = 520;
+      canvas.width = 340;
+      canvas.height = 420;
+      
+      // Card Background (No Border)
       ctx.fillStyle = "#ffffff";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(img, 35, 20, 250, 250);
+
+      // Draw QR Code Image
+      ctx.drawImage(img, 45, 15, 250, 250);
+
       ctx.textAlign = "center";
-      ctx.fillStyle = "#1e293b";
-      ctx.font = "bold 22px Arial";
-      ctx.fillText(qrName || "—", canvas.width / 2, 300);
-      ctx.font = "bold 16px Arial";
-      ctx.fillText(`${selected?.mobile || "—"}`, canvas.width / 2, 340);
-      ctx.fillText(`${selected?.email || "—"}`, canvas.width / 2, 370);
-      ctx.fillText(`${selected?.company || "—"}`, canvas.width / 2, 400);
+      const centerX = canvas.width / 2;
+
+      let currentY = 295;
+
+      // NAME (Centered, Same Dark Color #0f172a)
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "bold 18px Arial";
+      ctx.fillText(targetEx.name || "—", centerX, currentY);
+      currentY += 28;
+
+      // MOBILE (Centered, Same Dark Color #0f172a)
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "600 15px Arial";
+      ctx.fillText(targetEx.mobile || "—", centerX, currentY);
+      currentY += 28;
+
+      // COMPANY (Centered, Same Dark Color #0f172a, Extra Bold)
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "bold 17px Arial";
+      ctx.fillText(targetEx.company || "—", centerX, currentY);
+
       const link = document.createElement("a");
-      link.download = "Exhibitor_QRcode.png";
+      const safeName = (targetEx.name || "Exhibitor").replace(/[^a-zA-Z0-9]/g, "_");
+      link.download = `Exhibitor_QR_${safeName}.png`;
       link.href = canvas.toDataURL("image/png");
       link.click();
     };
+  };
+
+  const companyOptions = Array.from(
+    new Set(
+      data
+        .filter((item) => item.status === "Confirmed" && item.company && item.company.trim())
+        .map((item) => item.company.trim())
+    )
+  ).sort();
+
+  const handleStartBatchPrint = async () => {
+    setShowStartPrintModal(false);
+
+    let confirmedList = data.filter((item) => item.status === "Confirmed");
+    if (selectedCompanyFilter !== "all") {
+      confirmedList = confirmedList.filter(
+        (item) => item.company && item.company.trim() === selectedCompanyFilter
+      );
+    }
+
+    if (confirmedList.length === 0) {
+      toast.error("No confirmed exhibitors found for selected company filter");
+      return;
+    }
+
+    confirmedList.sort((a, b) => (a.company || "").localeCompare(b.company || ""));
+
+    setIsPrintingActive(true);
+    const toastId = toast.loading("Preparing print document...", {
+      closeOnClick: false,
+      autoClose: false,
+    });
+
+    try {
+      const allExhibitorCards = [];
+
+      for (let i = 0; i < confirmedList.length; i++) {
+        const item = confirmedList[i];
+        try {
+          const res = await axios.get(`${API_BASE_URL}/api/generate-qr/${item.id}`);
+          if (res.data.exhibitors && res.data.exhibitors.length > 0) {
+            res.data.exhibitors.forEach((ex) => {
+              allExhibitorCards.push({
+                ...ex,
+                qrUrl: `${API_BASE_URL}/qrcodes/${ex.fileName || ex.file}`
+              });
+            });
+          } else {
+            allExhibitorCards.push({
+              name: item.name,
+              mobile: item.mobile,
+              company: item.company,
+              qrUrl: `${API_BASE_URL}/qrcodes/${res.data.file}`
+            });
+          }
+        } catch (e) {
+          console.error(`QR fetch failed for item ${item.id}`, e);
+        }
+      }
+
+      toast.dismiss(toastId);
+
+      if (allExhibitorCards.length === 0) {
+        toast.error("Failed to generate QR codes for print");
+        setIsPrintingActive(false);
+        return;
+      }
+
+      const printWindow = window.open("", "_blank");
+      batchPrintWindowRef.current = printWindow;
+
+      if (!printWindow) {
+        toast.error("Popup blocked! Please allow popups to print.");
+        setIsPrintingActive(false);
+        return;
+      }
+
+      const cardsHtml = allExhibitorCards.map((ex) => `
+        <div class="card">
+          <img src="${ex.qrUrl}" />
+          <div class="info-box">
+            <div class="val-name">${ex.name || "—"}</div>
+            <div class="val-mobile">${ex.mobile || "—"}</div>
+            <div class="val-company">${ex.company || "—"}</div>
+          </div>
+        </div>
+      `).join("");
+
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>Print Exhibitors</title>
+            <style>
+              @page {
+                margin: 0;
+              }
+              body {
+                margin: 0;
+                padding: 20px;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 30px;
+                justify-content: center;
+                align-items: center;
+                font-family: Arial, sans-serif;
+                box-sizing: border-box;
+                background: #ffffff;
+              }
+              .card {
+                border: none;
+                padding: 10px;
+                text-align: center;
+                width: 300px;
+                background: #ffffff;
+                page-break-inside: avoid;
+              }
+              img {
+                width: 220px;
+                height: 220px;
+                margin-bottom: 8px;
+              }
+              .info-box {
+                background: transparent;
+                padding: 5px 0;
+                border: none;
+                text-align: center;
+              }
+              .val-name {
+                font-size: 18px;
+                font-weight: 700;
+                color: #0f172a;
+                margin-bottom: 4px;
+              }
+              .val-mobile {
+                font-size: 15px;
+                font-weight: 600;
+                color: #0f172a;
+                margin-bottom: 6px;
+              }
+              .val-company {
+                font-size: 17px;
+                font-weight: 800;
+                color: #0f172a;
+              }
+            </style>
+          </head>
+          <body>
+            ${cardsHtml}
+            <script>
+              window.onload = function() {
+                window.print();
+                window.onafterprint = function() {
+                  window.close();
+                }
+              }
+            </script>
+          </body>
+        </html>
+      `);
+      printWindow.document.close();
+
+      const checkWindowClosed = setInterval(() => {
+        if (!printWindow || printWindow.closed) {
+          clearInterval(checkWindowClosed);
+          setIsPrintingActive(false);
+        }
+      }, 1000);
+
+    } catch (err) {
+      console.error(err);
+      toast.dismiss(toastId);
+      toast.error("Error generating print document");
+      setIsPrintingActive(false);
+    }
+  };
+
+  const handleStopBatchPrint = () => {
+    if (batchPrintWindowRef.current && !batchPrintWindowRef.current.closed) {
+      try {
+        batchPrintWindowRef.current.close();
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    setIsPrintingActive(false);
+    setShowStopPrintModal(false);
+    toast.info("Printing stopped");
   };
 
   const exportCSV = () => {
@@ -610,12 +879,30 @@ function RegistrationList() {
       >
         <h2 className="text-dark fw-bold m-0">Exhibitor Registrations</h2>
 
-        <button
-          className="btn btn-outline-secondary btn-sm"
-          onClick={() => navigate(-1)}
-        >
-          <i className="fas fa-arrow-left me-1"></i> Back
-        </button>
+        <div>
+          {!isPrintingActive ? (
+            <button
+              className="btn btn-primary btn-sm me-2"
+              onClick={() => setShowStartPrintModal(true)}
+            >
+              <i className="fas fa-print me-1"></i> Print
+            </button>
+          ) : (
+            <button
+              className="btn btn-danger btn-sm me-2"
+              onClick={() => setShowStopPrintModal(true)}
+            >
+              <i className="fas fa-times me-1"></i> Cancel
+            </button>
+          )}
+
+          <button
+            className="btn btn-outline-secondary btn-sm"
+            onClick={() => navigate(-1)}
+          >
+            <i className="fas fa-arrow-left me-1"></i> Back
+          </button>
+        </div>
       </div>
       <div className="d-flex gap-2 mb-3">
         <div className="position-relative w-100">
@@ -741,7 +1028,7 @@ function RegistrationList() {
                     setModalType("confirm");
                     setSelected(item);
                     setIsEditMode(true);
-                    await loadExhibitorsForEdit(item.id);
+                    await loadExhibitorsForEdit(item);
                   }}
                   disabled={item.status === "Confirmed"}
                   data-bs-toggle="tooltip"
@@ -808,16 +1095,16 @@ function RegistrationList() {
                       const res = await axios.get(
                         `${API_BASE_URL}/api/exhibitors/${item.id}`
                       );
+                      const existing = res.data || [];
                       const nextExhibitorNumber =
-                        res.data && res.data.length > 0
-                          ? res.data.length + 1
-                          : 1;
+                        existing.length > 0 ? existing.length + 1 : 1;
                       setExhibitors([
+                        ...existing,
                         {
                           name: "",
                           mobile: "",
                           email: "",
-                          company: "",
+                          company: item.company || "",
                           exhibitorNo: nextExhibitorNumber
                         }
                       ]);
@@ -1068,18 +1355,28 @@ function RegistrationList() {
       )}
 
       {qrModal && (
-          <div
-            className="modal d-block"
-            style={{ background: "rgba(0,0,0,0.7)", backdropFilter: "blur(4px)" }}
-          >
-            <div className="modal-dialog modal-dialog-centered">
-              <div className="modal-content p-4 text-center position-relative" style={{ borderRadius: "20px", border: "none", boxShadow: "0 10px 30px rgba(0,0,0,0.2)" }}>
+        <div
+          className="modal d-block"
+          style={{ background: "rgba(0,0,0,0.7)", backdropFilter: "blur(4px)", zIndex: 1050 }}
+        >
+          <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable" style={{ maxWidth: "550px" }}>
+            <div
+              className="modal-content p-4 position-relative"
+              style={{
+                borderRadius: "20px",
+                border: "none",
+                boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
+                maxHeight: "85vh",
+                overflowY: "auto"
+              }}
+            >
+              <div className="d-flex justify-content-between align-items-center mb-3">
+                <h5 className="fw-bold m-0 text-dark">
+                  Exhibitor QR Code
+                </h5>
                 <button
                   onClick={() => setQrModal(false)}
                   style={{
-                    position: "absolute",
-                    top: 15,
-                    right: 15,
                     border: "none",
                     background: "#fee2e2",
                     fontSize: 18,
@@ -1096,75 +1393,169 @@ function RegistrationList() {
                 >
                   ✕
                 </button>
-                <div className="mb-4" style={{ background: "#fff", padding: "10px", display: "inline-block", borderRadius: "15px", boxShadow: "0 4px 12px rgba(0,0,0,0.05)" }}>
-                  <img
-                    src={qrImage}
-                    alt="QR Code"
-                    style={{ width: "220px", display: "inline-block" }}
-                  />
-                </div>
-                <div style={{ 
-                  background: "#f8fafc", 
-                  padding: "20px", 
-                  borderRadius: "15px", 
-                  textAlign: "left",
-                  border: "1px solid #e2e8f0" 
-                }}>
-                  {[
-                    { label: "Name", value: qrName },
-                    { label: "Mobile", value: selected?.mobile },
-                    { label: "Email", value: selected?.email },
-                    { label: "Company", value: selected?.company }
-                  ].map((item, index) => (
-                  <div key={index} style={{ 
-                    display: "flex",                
-                    justifyContent: "left",
-                    alignItems: "left",          
-                    marginBottom: index !== 3 ? "12px" : "0",
-                    borderBottom: index !== 3 ? "1px dashed #e2e8f0" : "none", 
-                    paddingBottom: index !== 3 ? "8px" : "0"
-                  }}>
-                    <span style={{ 
-                      fontSize: "15px",            
-                      fontWeight: "800", 
-                      color: "#627c9f", 
-                      textTransform: "uppercase",
-                      letterSpacing: "0.5px"
-                    }}>
-                      {item.label}:
-                    </span>
-                    <span style={{ 
-                      fontSize: "15px", 
-                      fontWeight: "600", 
-                      color: "#1e293b",
-                      textAlign: "left", 
-                      marginLeft: "5px"            
-                    }}>
-                      {item.value || "—"}
-                    </span>
-                  </div>
-                ))}
               </div>
-              <div className="mt-4 d-flex justify-content-center gap-3">
-                <button 
-                  className="btn btn-primary px-4" 
-                  onClick={printQR}
-                  style={{ borderRadius: "10px", fontWeight: "600", padding: "10px 25px" }}
+
+              {qrExhibitors.length > 1 && (
+                <div className="d-flex justify-content-center gap-2 mb-3 flex-wrap">
+                  {qrExhibitors.map((_, idx) => (
+                    <button
+                      key={idx}
+                      className={`btn btn-sm ${
+                        activePersonIndex === idx ? "btn-primary shadow-sm" : "btn-outline-secondary"
+                      }`}
+                      onClick={() => setActivePersonIndex(idx)}
+                      style={{
+                        borderRadius: "20px",
+                        padding: "6px 18px",
+                        fontWeight: "700",
+                        transition: "all 0.2s"
+                      }}
+                    >
+                      Person {idx + 1}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {(() => {
+                const activeEx = qrExhibitors[activePersonIndex] || qrExhibitors[0];
+                if (!activeEx) return null;
+                return (
+                  <div
+                    className="p-3 text-center border-0 rounded-4 position-relative"
+                    style={{ background: "#ffffff" }}
+                  >
+                    <div
+                      className="mb-2 text-center"
+                      style={{
+                        background: "#fff",
+                        padding: "5px",
+                        display: "inline-block",
+                        borderRadius: "15px"
+                      }}
+                    >
+                      <img
+                        src={activeEx.qrUrl}
+                        alt={`QR Code ${activeEx.name}`}
+                        style={{ width: "220px", display: "inline-block" }}
+                      />
+                    </div>
+
+                    <div
+                      style={{
+                        padding: "10px 15px",
+                        textAlign: "center",
+                        border: "none"
+                      }}
+                    >
+                      <div style={{ fontSize: "18px", fontWeight: "700", color: "#0f172a", marginBottom: "4px" }}>
+                        {activeEx.name || "—"}
+                      </div>
+                      <div style={{ fontSize: "15px", fontWeight: "600", color: "#0f172a", marginBottom: "6px" }}>
+                        {activeEx.mobile || "—"}
+                      </div>
+                      <div style={{ fontSize: "17px", fontWeight: "800", color: "#0f172a" }}>
+                        {activeEx.company || "—"}
+                      </div>
+                    </div>
+
+                    <div className="mt-4 d-flex justify-content-center gap-3">
+                      <button
+                        className="btn btn-primary px-4"
+                        onClick={() => printQR(activeEx)}
+                        style={{ borderRadius: "10px", fontWeight: "600", padding: "10px 25px" }}
+                      >
+                        Print
+                      </button>
+                      <button
+                        className="btn btn-success px-4"
+                        onClick={() => downloadQR(activeEx)}
+                        style={{ borderRadius: "10px", fontWeight: "600", padding: "10px 25px" }}
+                      >
+                        Download
+                      </button>
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+          </div>
+        </div>
+      )}
+      {showStartPrintModal && (
+        <div
+          className="modal d-block"
+          style={{ background: "rgba(0,0,0,0.7)", backdropFilter: "blur(4px)", zIndex: 1050 }}
+        >
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content p-4 text-center position-relative" style={{ borderRadius: "15px" }}>
+              <h5 className="fw-bold mb-3 text-dark">Print Exhibitors</h5>
+              <p className="text-dark fw-bold mb-3 fs-6">Are you sure want to print?</p>
+
+              <div className="mb-4 text-start">
+                <label className="fw-bold text-dark mb-1 fs-6">Company Name:</label>
+                <select
+                  className="form-select"
+                  value={selectedCompanyFilter}
+                  onChange={(e) => setSelectedCompanyFilter(e.target.value)}
+                >
+                  <option value="all">All Companies</option>
+                  {companyOptions.map((comp, idx) => (
+                    <option key={idx} value={comp}>
+                      {comp}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="d-flex justify-content-center gap-3">
+                <button
+                  className="btn btn-secondary px-4"
+                  onClick={() => setShowStartPrintModal(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="btn btn-primary px-4"
+                  onClick={handleStartBatchPrint}
                 >
                   Print
-                </button>
-                <button 
-                  className="btn btn-success px-4" 
-                  onClick={downloadQR}
-                  style={{ borderRadius: "10px", fontWeight: "600", padding: "10px 25px" }}
-                >
-                  Download
                 </button>
               </div>
             </div>
           </div>
         </div>
       )}
+
+      {showStopPrintModal && (
+        <div
+          className="modal d-block"
+          style={{ background: "rgba(0,0,0,0.7)", backdropFilter: "blur(4px)", zIndex: 1050 }}
+        >
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content p-4 text-center position-relative" style={{ borderRadius: "15px" }}>
+              <h5 className="fw-bold mb-3 text-dark">Stop Printing</h5>
+              <p className="text-secondary mb-4 fs-6">Are you sure want to stop printing</p>
+
+              <div className="d-flex justify-content-center gap-3">
+                <button
+                  className="btn btn-secondary px-4"
+                  onClick={() => setShowStopPrintModal(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="btn btn-danger px-4"
+                  onClick={handleStopBatchPrint}
+                >
+                  Yes
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <ToastContainer autoClose={1500} />
     </div>
   );

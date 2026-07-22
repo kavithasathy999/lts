@@ -72,8 +72,8 @@ function RegistrationDetails() {
     .then(() => {
       toast.success("Rejected & Mail Sent");
       setShowRejectModal(false);
+      setData({ ...data, status: "Rejected", comments: rejectionReason });
       setRejectionReason("");
-      setData({ ...data, status: "Rejected" });
     })
     .catch(() => toast.error("Error rejecting"))
     .finally(() => {
@@ -173,6 +173,14 @@ function RegistrationDetails() {
                   </span>
                 </td>
               </tr>
+              {(data.status === "Rejected" || data.comments) && (
+                <tr>
+                  <th style={{ background: "#f8f9fa", width: "30%" }}>Comments</th>
+                  <td style={{ borderLeft: "1px solid #dee2e6", color: "#dc2626", fontWeight: "600" }}>
+                    {data.comments || data.reject_reason || "—"}
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
