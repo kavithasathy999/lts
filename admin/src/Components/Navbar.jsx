@@ -2,27 +2,28 @@ import { API_BASE_URL } from "../config/api";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
+import { clearAdminSession, getStoredAdmin, updateStoredAdmin } from "../utils/adminSession";
 
 function Navbar() {
   const navigate = useNavigate();
   const [admin, setAdmin] = useState(null);
 
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem("admin"));
+    const stored = getStoredAdmin();
     if (stored) {
       setAdmin(stored);
     }
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("admin");
+    clearAdminSession();
     navigate("/");
   };
 
   const handlePhotoUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    const admin = JSON.parse(localStorage.getItem("admin"));
+    const admin = getStoredAdmin();
     if (!admin) return;
     const maxSize = 2 * 1024 * 1024; 
     if (file.size > maxSize) {
@@ -42,7 +43,7 @@ function Navbar() {
       if (res.ok) {
         toast.success("Profile photo updated!");
         const updated = { ...admin, profile_photo: data.profile_photo };
-        localStorage.setItem("admin", JSON.stringify(updated));
+        updateStoredAdmin(updated);
         setAdmin(updated);
       } else {
         toast.error(data.message || "Upload failed");

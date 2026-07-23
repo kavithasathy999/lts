@@ -1,7 +1,8 @@
 import { API_BASE_URL } from "./config/api";
 import React, { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom"; 
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { isAdminSessionActive, saveAdminSession } from "./utils/adminSession";
 import './App.css';
 
 function AdminLogin() {
@@ -14,7 +15,7 @@ function AdminLogin() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (localStorage.getItem("admin")) {
+    if (isAdminSessionActive()) {
       navigate("/admin");
     }
   }, [navigate]);
@@ -40,12 +41,12 @@ function AdminLogin() {
       });
       const data = await res.json();
       if (res.ok) {
-        localStorage.setItem("admin", JSON.stringify({
+        saveAdminSession({
           id: data.id,
           username: "Admin",         
           email: data.email,
           profile_photo: data.profile_photo || null
-        }));
+        });
         navigate("/admin");
       } else {
         setError(data.message || "Invalid Username or Password");

@@ -1490,7 +1490,7 @@ function RegistrationList() {
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content p-4 text-center position-relative" style={{ borderRadius: "15px" }}>
               <h5 className="fw-bold mb-3 text-dark">Print Exhibitors</h5>
-              <p className="text-dark fw-bold mb-3 fs-6">Are you sure want to print?</p>
+              <p className="text-dark fw-bold~ mb-3 fs-6">Are you sure want to print?</p>
 
               <div className="mb-4 text-start">
                 <label className="fw-bold text-dark mb-1 fs-6">Company Name:</label>
